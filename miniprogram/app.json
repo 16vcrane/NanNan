@@ -5,7 +5,10 @@
     "pages/profile/profile",
     "pages/detail/detail",
     "pages/reflection/reflection",
-    "pages/ai-info/ai-info"
+    "pages/ai-info/ai-info",
+    "pages/privacy/privacy",
+    "pages/user-agreement/user-agreement",
+    "pages/data-management/data-management"
   ],
   "window": {
     "navigationBarTextStyle": "black",

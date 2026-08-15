@@ -13,6 +13,13 @@ function getCurrentUser() {
   return request({ url: '/users/me' })
 }
 
+function deleteCurrentUser() {
+  return request({
+    url: '/users/me',
+    method: 'DELETE'
+  })
+}
+
 function createDiary(payload) {
   return request({
     url: '/diaries',
@@ -59,6 +66,7 @@ function deleteUploadedImage(imageId) {
 module.exports = {
   login,
   getCurrentUser,
+  deleteCurrentUser,
   createDiary,
   getDiaryList,
   getDiaryDetail,

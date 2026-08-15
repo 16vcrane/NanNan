@@ -80,6 +80,31 @@ Response `200` uses the same user object returned by the login endpoint.
 
 Response `401`: `AUTH_INVALID`.
 
+## DELETE /api/v1/users/me
+
+Permanently deletes the authenticated account and all owned server data. The
+service locks the user row, removes every owned private image object, then
+deletes `UserProfile`; database foreign keys cascade to diaries, image records,
+AI reflections, and timeline markers.
+
+```json
+{
+  "code": 0,
+  "message": "ok",
+  "data": { "deleted": true }
+}
+```
+
+If private storage cleanup fails, the account remains and the endpoint returns
+`503 USER_DATA_DELETE_FAILED`, allowing the user to retry. Existing access
+tokens no longer authenticate after successful deletion because the user row
+no longer exists.
+
+Phase 8 logout is client-side because access tokens are stateless. The client
+removes its token, cached user, and unsaved local draft; it does not call the
+account deletion endpoint. A later explicit login obtains a new token for the
+same account.
+
 ## POST /api/v1/diaries
 
 Creates a private diary entry for the authenticated user. The same transaction

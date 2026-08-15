@@ -80,6 +80,10 @@ function cleanupKey(userId) {
   return `${CLEANUP_PREFIX}${userId}`
 }
 
+function clearCleanup(userId) {
+  if (userId) wx.removeStorageSync(cleanupKey(userId))
+}
+
 function enqueueCleanup(userId, imageId) {
   if (!userId || !imageId) return
   const key = cleanupKey(userId)
@@ -113,5 +117,6 @@ module.exports = {
   deleteImage,
   downloadImage,
   enqueueCleanup,
-  flushCleanup
+  flushCleanup,
+  clearCleanup
 }

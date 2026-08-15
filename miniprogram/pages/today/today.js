@@ -396,7 +396,8 @@ Page({
     this.setData({ saving: true, canSave: false, saveState: 'saving' })
 
     try {
-      const user = await auth.ensureLogin()
+      const app = getApp()
+      const user = app.globalData.userInfo || await auth.ensureLogin({ force: true })
       if (!this.draftUserId && user && user.id) {
         this.draftUserId = user.id
       }

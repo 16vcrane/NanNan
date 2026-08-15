@@ -1,15 +1,38 @@
-<view class="page">
+<view class="page profile-page">
   <view class="page-title">我的</view>
-  <view class="page-subtitle">账户与数据设置</view>
+  <view class="page-subtitle">账户、隐私与数据</view>
+
+  <view class="surface account-panel">
+    <view class="account-mark">喃</view>
+    <view wx:if="{{loggedIn}}" class="account-copy">
+      <text class="account-name">喃喃用户</text>
+      <text class="account-id">用户 ID · {{user.shortId}}</text>
+    </view>
+    <view wx:else class="account-copy">
+      <text class="account-name">当前未登录</text>
+      <text class="account-id">登录后查看和管理你的数据</text>
+    </view>
+    <button wx:if="{{!loggedIn}}" class="login-action" loading="{{loggingIn}}" bindtap="handleLogin">登录</button>
+  </view>
 
   <view class="surface menu-list">
     <view class="menu-item" bindtap="openAiInfo" role="button" aria-label="查看 AI 使用说明">
       <text>AI 使用说明</text>
       <text class="menu-arrow">›</text>
     </view>
-    <view class="menu-item menu-item-disabled">
-      <text>隐私与数据</text>
-      <text class="muted">后续接入</text>
+    <view class="menu-item" bindtap="openPrivacy" role="button" aria-label="查看隐私政策">
+      <text>隐私政策</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="openAgreement" role="button" aria-label="查看用户协议">
+      <text>用户协议</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="openDataManagement" role="button" aria-label="管理和删除数据">
+      <text>数据管理</text>
+      <text class="menu-arrow">›</text>
     </view>
   </view>
+
+  <button wx:if="{{loggedIn}}" class="logout-action" bindtap="handleLogout">退出登录</button>
 </view>

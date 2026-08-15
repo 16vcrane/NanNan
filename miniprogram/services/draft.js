@@ -22,8 +22,22 @@ function clearDraft(userId) {
   wx.removeStorageSync(draftKey(userId))
 }
 
+function discardDraft(userId) {
+  const draft = getDraft(userId)
+  if (draft && wx.removeSavedFile) {
+    const images = draft.images || []
+    images.forEach((image) => {
+      if (image.savedFile && image.localPath) {
+        wx.removeSavedFile({ filePath: image.localPath })
+      }
+    })
+  }
+  clearDraft(userId)
+}
+
 module.exports = {
   getDraft,
   saveDraft,
-  clearDraft
+  clearDraft,
+  discardDraft
 }

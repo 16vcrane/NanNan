@@ -28,6 +28,7 @@ async function loginWithWechat() {
   const response = await api.login(code)
   storage.setAccessToken(response.data.accessToken)
   storage.setAuthUser(response.data.user)
+  storage.clearLoggedOut()
   app.globalData.accessToken = response.data.accessToken
   app.globalData.userInfo = response.data.user
   app.globalData.authStatus = 'authenticated'
@@ -69,6 +70,9 @@ async function restoreLogin() {
 }
 
 function ensureLogin(options = {}) {
+  if (!options.force && storage.isLoggedOut()) {
+    return Promise.resolve(null)
+  }
   if (loginTask) {
     return loginTask
   }
@@ -88,13 +92,18 @@ function ensureLogin(options = {}) {
   return loginTask
 }
 
-function clearLogin() {
+function clearLogin(options = {}) {
   const app = getApp()
   storage.clearAccessToken()
   storage.clearAuthUser()
   app.globalData.accessToken = null
   app.globalData.userInfo = null
   app.globalData.authStatus = 'idle'
+  if (options.intentional) {
+    storage.markLoggedOut()
+  } else {
+    storage.clearLoggedOut()
+  }
 }
 
 module.exports = {

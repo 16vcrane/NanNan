@@ -1,0 +1,32 @@
+<view class="page data-page">
+  <text class="page-title">数据管理</text>
+  <text class="page-subtitle">查看删除方式与影响</text>
+
+  <view class="data-section">
+    <text class="data-title">删除单篇日记</text>
+    <text class="data-copy">在日记详情页可以删除单篇记录。正文、关联图片、AI 回响和关键帧会同步进入删除流程。</text>
+  </view>
+
+  <view class="data-section">
+    <text class="data-title">退出登录</text>
+    <text class="data-copy">退出只清除本机登录态和未保存草稿，不会删除服务端日记。再次主动登录后仍可查看原有数据。</text>
+  </view>
+
+  <view class="danger-section">
+    <text class="data-title danger-title">永久删除全部数据</text>
+    <text class="data-copy">此操作会删除账户基础信息、全部日记、图片对象、AI 回响和关键帧，完成后无法恢复。</text>
+    <button
+      wx:if="{{user}}"
+      class="delete-all-action"
+      loading="{{deleting}}"
+      disabled="{{deleting}}"
+      bindtap="handleDeleteAll"
+    >永久删除账户与数据</button>
+    <button
+      wx:else
+      class="login-data-action"
+      loading="{{loggingIn}}"
+      bindtap="handleLogin"
+    >登录后管理数据</button>
+  </view>
+</view>

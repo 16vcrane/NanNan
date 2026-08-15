@@ -3,17 +3,27 @@
   <view class="page-subtitle">了解智能能力的边界</view>
 
   <view class="surface info-section">
-    <view class="info-title">AI 会做什么</view>
+    <view class="info-title">AI 回响是什么</view>
     <text class="info-copy">根据你的日记内容，生成一段温暖、克制的单向回响。</text>
   </view>
 
   <view class="surface info-section">
+    <view class="info-title">AI 会处理哪些数据</view>
+    <text class="info-copy">生成回响时会把本篇日记文字发送给服务端配置的大模型。当前不会把情绪值或你上传的图片发送给大模型。</text>
+  </view>
+
+  <view class="surface info-section">
     <view class="info-title">AI 不会做什么</view>
-    <text class="info-copy">AI 结果不构成医疗诊断、心理治疗或其他专业意见。</text>
+    <text class="info-copy">AI 不进行心理或医学诊断，不提供治疗建议，不编造日记中没有的事实，也不会主动发起多轮聊天。</text>
   </view>
 
   <view class="surface info-section">
     <view class="info-title">日记始终优先</view>
     <text class="info-copy">即使 AI 暂时不可用，你的日记保存也不会受到影响。</text>
+  </view>
+
+  <view class="surface info-section">
+    <view class="info-title">遇到困难时</view>
+    <text class="info-copy">涉及明显危机的内容会停止普通回响并显示安全提示。AI 不能替代可信任的人、当地紧急援助或专业支持。</text>
   </view>
 </view>

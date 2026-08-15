@@ -1,0 +1,29 @@
+<view class="page document-page">
+  <text class="page-title">隐私政策</text>
+  <text class="document-updated">更新日期：2026年8月15日</text>
+
+  <view class="document-section">
+    <text class="document-title">我们收集的数据</text>
+    <text class="document-copy">为提供私密记录服务，我们保存微信登录产生的稳定身份标识、日记文字、情绪值、用户主动上传的图片、AI 回响，以及生成状态和错误分类等必要运行信息。我们不保存微信密码，也不索取与记录功能无关的资料。</text>
+  </view>
+
+  <view class="document-section">
+    <text class="document-title">数据如何使用</text>
+    <text class="document-copy">这些数据只用于身份识别、保存和展示你的日记、生成 AI 回响、提取关键帧、排查服务故障与保障内容安全。日记默认仅本人可见，不进入公开社区、评论或推荐流。</text>
+  </view>
+
+  <view class="document-section">
+    <text class="document-title">第三方 AI 处理</text>
+    <text class="document-copy">生成 AI 回响时，本篇日记文字会发送给服务端配置的大模型提供方。当前版本不会把日记图片发送给大模型。模型密钥只保存在服务端，不会进入小程序。</text>
+  </view>
+
+  <view class="document-section">
+    <text class="document-title">存储与访问</text>
+    <text class="document-copy">日记和账户数据存放在业务数据库，图片存放在私有对象存储。所有数据接口都需要登录并校验数据归属，图片通过鉴权接口访问，不提供公开存储地址。</text>
+  </view>
+
+  <view class="document-section">
+    <text class="document-title">保留、查询与删除</text>
+    <text class="document-copy">你可以在“时光”中查询记录，在日记详情删除单篇内容，也可以在“我的－数据管理”永久删除账户及全部服务端数据。退出登录只清除本机登录态和未保存草稿，不会删除服务端日记。</text>
+  </view>
+</view>

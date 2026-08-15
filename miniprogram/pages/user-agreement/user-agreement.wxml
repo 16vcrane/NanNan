@@ -1,0 +1,29 @@
+<view class="page document-page">
+  <text class="page-title">用户协议</text>
+  <text class="document-updated">更新日期：2026年8月15日</text>
+
+  <view class="document-section">
+    <text class="document-title">服务内容</text>
+    <text class="document-copy">喃喃提供私密日记记录、图片保存、AI 单向回响和时间轴回顾功能。首版不提供公开社区、多轮 AI 聊天、心理诊断或医疗服务。</text>
+  </view>
+
+  <view class="document-section">
+    <text class="document-title">你的内容</text>
+    <text class="document-copy">你保留对自己日记和图片的权利，并应确保上传内容合法且不侵害他人权益。请不要利用本服务制作、保存或传播违法和危险内容。</text>
+  </view>
+
+  <view class="document-section">
+    <text class="document-title">AI 内容边界</text>
+    <text class="document-copy">AI 回响可能出现遗漏或错误，只能作为记录后的辅助回应，不能替代医疗、心理、法律或其他专业意见。遇到紧急危险时，请优先联系可信任的人或当地紧急援助。</text>
+  </view>
+
+  <view class="document-section">
+    <text class="document-title">账户与安全</text>
+    <text class="document-copy">账户通过微信登录识别。请妥善管理自己的微信设备和登录状态。退出登录不会删除服务端数据；永久删除账户后，相关数据无法恢复。</text>
+  </view>
+
+  <view class="document-section">
+    <text class="document-title">服务变更</text>
+    <text class="document-copy">为保障安全、合规和稳定性，服务可能进行必要维护或调整。涉及数据处理方式的重要变化会同步更新本协议与隐私政策。</text>
+  </view>
+</view>
