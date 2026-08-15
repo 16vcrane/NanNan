@@ -1,0 +1,29 @@
+<view class="reflection-panel" aria-live="polite">
+  <view wx:if="{{status === 'pending'}}" class="state pending-state">
+    <view class="writing-mark"><view></view><view></view><view></view></view>
+    <text class="state-title">正在写给你的回响</text>
+    <text class="state-copy">这一页已经保存，可以放心离开后再回来看看。</text>
+  </view>
+
+  <view wx:elif="{{status === 'success'}}" class="state success-state">
+    <text class="letter-label">写给此刻的你</text>
+    <text class="reflection-copy">{{content}}</text>
+  </view>
+
+  <view wx:elif="{{status === 'blocked'}}" class="state blocked-state">
+    <text class="state-title">请先照顾好自己</text>
+    <text class="state-copy reflection-copy">{{content}}</text>
+  </view>
+
+  <view wx:else class="state failed-state">
+    <text class="state-title">回响暂时没有写完</text>
+    <text class="state-copy reflection-copy">{{content}}</text>
+    <button
+      wx:if="{{canRetry}}"
+      class="retry-button"
+      loading="{{retrying}}"
+      disabled="{{retrying}}"
+      bindtap="handleRetry"
+    >重新生成</button>
+  </view>
+</view>

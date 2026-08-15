@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     llm_model: str = ""
     llm_api_key: str = ""
     llm_base_url: str = ""
+    llm_timeout_seconds: float = 30.0
+    reflection_max_attempts: int = 3
     storage_endpoint: str = ""
     storage_bucket: str = ""
     storage_access_key: str = ""

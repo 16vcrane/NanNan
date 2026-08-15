@@ -402,7 +402,7 @@ Page({
       }
       const successfulImages = this.data.images.filter((image) => image.status === 'success')
       const hasFailedImages = this.data.images.some((image) => image.status === 'failed')
-      await api.createDiary({
+      const response = await api.createDiary({
         content: this.data.content,
         energyScore: this.data.energyScore,
         moodLabel: this.data.moodLabel,
@@ -434,6 +434,11 @@ Page({
         })
       } else {
         wx.showToast({ title: '日记已保存', icon: 'success' })
+      }
+      if (wx.navigateTo && response.data && response.data.diaryId) {
+        wx.navigateTo({
+          url: `/pages/reflection/reflection?diaryId=${response.data.diaryId}`
+        })
       }
     } catch (error) {
       this.isDirty = true

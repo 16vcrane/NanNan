@@ -2,7 +2,7 @@ import uuid
 
 import httpx
 import pytest
-from sqlalchemy import delete
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
@@ -11,8 +11,11 @@ from app.core.config import Settings, get_settings
 from app.core.database import get_db
 from app.main import app
 from app.models.diary import DiaryEntry
+from app.models.reflection import AiReflection
 from app.models.user import UserProfile
 from app.services.auth_service import get_or_create_user
+from app.ai.provider import LLMProviderError
+from app.services import reflection_service
 
 
 def auth_settings() -> Settings:
@@ -22,6 +25,11 @@ def auth_settings() -> Settings:
 @pytest.mark.asyncio
 async def test_diary_crud_and_user_isolation(monkeypatch) -> None:
     monkeypatch.setattr(security, "get_settings", auth_settings)
+
+    def unconfigured_provider():
+        raise LLMProviderError("not configured in API test")
+
+    monkeypatch.setattr(reflection_service, "get_llm_provider", unconfigured_provider)
     suffix = uuid.uuid4()
     engine = create_async_engine(get_settings().database_url, poolclass=NullPool)
     session_factory = async_sessionmaker(engine, expire_on_commit=False)
@@ -93,6 +101,30 @@ async def test_diary_crud_and_user_isolation(monkeypatch) -> None:
             )
             assert foreign_delete_response.status_code == 404
 
+            reflection_response = await client.get(
+                f"/api/v1/diaries/{diary_id}/reflection", headers=first_headers
+            )
+            assert reflection_response.status_code == 200
+            reflection_data = reflection_response.json()["data"]
+            assert reflection_data["status"] == "failed"
+            assert reflection_data["attemptCount"] == 1
+            assert reflection_data["canRetry"] is True
+
+            foreign_reflection = await client.get(
+                f"/api/v1/diaries/{diary_id}/reflection", headers=second_headers
+            )
+            assert foreign_reflection.status_code == 404
+
+            retry_response = await client.post(
+                f"/api/v1/diaries/{diary_id}/reflection/retry", headers=first_headers
+            )
+            assert retry_response.status_code == 202
+            retried_reflection = await client.get(
+                f"/api/v1/diaries/{diary_id}/reflection", headers=first_headers
+            )
+            assert retried_reflection.json()["data"]["status"] == "failed"
+            assert retried_reflection.json()["data"]["attemptCount"] == 2
+
             delete_response = await client.delete(
                 f"/api/v1/diaries/{diary_id}", headers=first_headers
             )
@@ -103,6 +135,14 @@ async def test_diary_crud_and_user_isolation(monkeypatch) -> None:
                 f"/api/v1/diaries/{diary_id}", headers=first_headers
             )
             assert deleted_response.status_code == 404
+
+            async with session_factory() as db:
+                deleted_reflection = await db.scalar(
+                    select(AiReflection).where(
+                        AiReflection.diary_entry_id == uuid.UUID(diary_id)
+                    )
+                )
+                assert deleted_reflection is None
     finally:
         app.dependency_overrides.pop(get_db, None)
         async with session_factory() as db:

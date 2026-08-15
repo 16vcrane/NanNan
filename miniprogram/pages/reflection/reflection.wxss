@@ -1,0 +1,44 @@
+.reflection-page {
+  padding-top: 56rpx;
+  padding-bottom: calc(48rpx + env(safe-area-inset-bottom));
+}
+
+.result {
+  display: block;
+  margin-top: 40rpx;
+}
+
+.network-note {
+  display: block;
+  margin-top: 20rpx;
+  color: var(--color-text-muted);
+  font-size: 24rpx;
+  text-align: center;
+}
+
+.actions {
+  margin-top: 42rpx;
+}
+
+.primary-action,
+.text-action {
+  width: 100%;
+  height: 84rpx;
+  border-radius: 8rpx;
+  font-size: 29rpx;
+  line-height: 84rpx;
+}
+
+.primary-action {
+  background: #6b4933;
+  color: #fff;
+}
+
+.text-action {
+  margin-top: 14rpx;
+  background: transparent;
+  color: var(--color-primary);
+}
+
+.primary-action::after,
+.text-action::after { border: 0; }

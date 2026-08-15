@@ -3,6 +3,7 @@
     "pages/today/today",
     "pages/timeline/timeline",
     "pages/profile/profile",
+    "pages/reflection/reflection",
     "pages/ai-info/ai-info"
   ],
   "window": {

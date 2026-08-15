@@ -1,0 +1,20 @@
+<view class="page reflection-page">
+  <text class="page-title">这一刻，有了回响</text>
+  <text class="page-subtitle">日记已经好好收进时光里</text>
+
+  <reflection-result
+    class="result"
+    status="{{status}}"
+    content="{{content}}"
+    can-retry="{{canRetry}}"
+    retrying="{{retrying}}"
+    bind:retry="handleRetry"
+  />
+
+  <text wx:if="{{loadError && status === 'pending'}}" class="network-note">回响还在路上，稍后可以从日记详情查看</text>
+
+  <view class="actions">
+    <button class="primary-action" bindtap="goToTimeline">去时光看看</button>
+    <button class="text-action" bindtap="goToToday">再写一篇</button>
+  </view>
+</view>

@@ -4,7 +4,7 @@
 
   <view class="surface info-section">
     <view class="info-title">AI 会做什么</view>
-    <text class="info-copy">根据你的日记内容生成摘要、情绪分析与温和建议。</text>
+    <text class="info-copy">根据你的日记内容，生成一段温暖、克制的单向回响。</text>
   </view>
 
   <view class="surface info-section">

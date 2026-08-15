@@ -1,8 +1,8 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, status
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.core.database import get_db
 from app.core.security import get_current_user
@@ -30,6 +30,12 @@ from app.services.diary_service import (
     list_diaries,
 )
 from app.services.image_service import list_diary_images
+from app.api.reflections import serialize_reflection
+from app.services.reflection_service import (
+    ReflectionNotFoundError,
+    get_reflection,
+    run_reflection_task,
+)
 
 router = APIRouter(prefix="/diaries", tags=["diaries"])
 CurrentUser = Annotated[UserProfile, Depends(get_current_user)]
@@ -46,6 +52,7 @@ def diary_not_found() -> HTTPException:
 @router.post("", response_model=CreateDiaryResponse, status_code=status.HTTP_201_CREATED)
 async def create_diary_endpoint(
     payload: DiaryCreateRequest,
+    background_tasks: BackgroundTasks,
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
 ) -> CreateDiaryResponse:
@@ -63,6 +70,10 @@ async def create_diary_endpoint(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={"code": "DIARY_IMAGE_INVALID", "message": "图片无效或不属于当前用户"},
         ) from exc
+    task_sessions = async_sessionmaker(db.bind, expire_on_commit=False)
+    background_tasks.add_task(
+        run_reflection_task, diary.ai_reflection_id, task_sessions
+    )
     return CreateDiaryResponse(
         data=CreateDiaryData(diaryId=diary.id, reflectionStatus="pending")
     )
@@ -97,10 +108,17 @@ async def get_diary_endpoint(
     except DiaryNotFoundError:
         raise diary_not_found() from None
     images = await list_diary_images(db, current_user.id, diary.id)
+    try:
+        reflection = serialize_reflection(
+            await get_reflection(db, current_user.id, diary.id)
+        ).model_dump(by_alias=True)
+    except ReflectionNotFoundError:
+        reflection = None
     return DiaryDetailResponse(
         data=DiaryDetailData(
             diary=DiaryResponse.model_validate(diary),
             images=images,
+            reflection=reflection,
         )
     )
 

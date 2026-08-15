@@ -5,7 +5,7 @@
 Alembic migrations live in `backend/migrations/versions`. The backend container
 runs `alembic upgrade head` before starting FastAPI.
 
-Current revision: `20260815_0003`.
+Current revision: `20260815_0004`.
 
 ## user_profiles
 
@@ -38,7 +38,7 @@ where `deleted_at` is set.
 | `energy_score` | `INTEGER` | Not null, API range 0–100, default 50 |
 | `mood_label` | `VARCHAR(32)` | Nullable |
 | `privacy_status` | `VARCHAR(16)` | Not null, default `private` |
-| `ai_reflection_id` | `UUID` | Nullable placeholder for Phase 5 |
+| `ai_reflection_id` | `UUID` | Nullable foreign key to `ai_reflections.id`; delete sets null |
 | `created_at` | `TIMESTAMPTZ` | Not null, `now()` |
 | `updated_at` | `TIMESTAMPTZ` | Not null, `now()` |
 | `deleted_at` | `TIMESTAMPTZ` | Nullable soft-delete marker |
@@ -73,3 +73,27 @@ Indexes:
 
 - `diary_images(diary_id)` for diary detail and deletion cleanup.
 - `diary_images(user_id, status)` for owned upload lookups.
+
+# Phase 5：AI 回响
+
+## ai_reflections
+
+| 字段 | 类型 | 约束/说明 |
+| --- | --- | --- |
+| id | UUID | 主键 |
+| diary_entry_id | UUID | `diary_entries.id`，唯一，级联删除 |
+| user_id | UUID | `user_profiles.id`，级联删除 |
+| status | varchar(16) | `pending/success/failed/blocked` |
+| content | text | 仅保存校验后的回响或固定兜底文案 |
+| model_name | varchar(128) | 实际模型名，可空 |
+| prompt_version | varchar(32) | 当前为 `reflection_v1` |
+| safety_status | varchar(16) | `safe/sensitive/blocked` |
+| attempt_count | integer | 已执行生成次数，默认 0 |
+| error_code | varchar(64) | 安全的内部错误分类，可空 |
+| latency_ms | integer | 生成耗时，可空 |
+| token_usage | integer | Provider 返回的总 token，可空 |
+| created_at / updated_at | timestamptz | 创建和更新时间 |
+
+索引：`diary_entry_id`、`(user_id, status)`。`diary_entries.ai_reflection_id` 增加到 `ai_reflections.id` 的外键，删除回响时置空。
+
+迁移：`20260815_0004_create_ai_reflections.py`。

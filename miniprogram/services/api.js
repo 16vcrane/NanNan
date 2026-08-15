@@ -38,6 +38,17 @@ function deleteDiary(diaryId) {
   })
 }
 
+function getReflection(diaryId) {
+  return request({ url: `/diaries/${diaryId}/reflection` })
+}
+
+function retryReflection(diaryId) {
+  return request({
+    url: `/diaries/${diaryId}/reflection/retry`,
+    method: 'POST'
+  })
+}
+
 function deleteUploadedImage(imageId) {
   return request({
     url: `/uploads/images/${imageId}`,
@@ -52,5 +63,7 @@ module.exports = {
   getDiaryList,
   getDiaryDetail,
   deleteDiary,
+  getReflection,
+  retryReflection,
   deleteUploadedImage
 }

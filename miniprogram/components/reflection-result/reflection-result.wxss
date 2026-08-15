@@ -1,0 +1,89 @@
+.reflection-panel {
+  width: 100%;
+  min-height: 360rpx;
+  box-sizing: border-box;
+  padding: 44rpx 36rpx;
+  border: 1rpx solid var(--color-border);
+  border-radius: 8rpx;
+  background: #fffdf9;
+}
+
+.state {
+  min-height: 270rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.pending-state {
+  align-items: center;
+  text-align: center;
+}
+
+.writing-mark {
+  height: 30rpx;
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-bottom: 30rpx;
+}
+
+.writing-mark view {
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: var(--color-primary);
+  animation: writing 1.2s infinite ease-in-out;
+}
+
+.writing-mark view:nth-child(2) { animation-delay: 0.15s; }
+.writing-mark view:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes writing {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-8rpx); }
+}
+
+.state-title,
+.letter-label {
+  color: var(--color-text);
+  font-size: 32rpx;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.letter-label {
+  color: var(--color-primary);
+  font-size: 25rpx;
+}
+
+.state-copy {
+  margin-top: 18rpx;
+  color: var(--color-text-muted);
+  font-size: 27rpx;
+  line-height: 1.8;
+}
+
+.reflection-copy {
+  display: block;
+  color: var(--color-text);
+  font-size: 30rpx;
+  line-height: 2;
+  white-space: normal;
+}
+
+.retry-button {
+  min-width: 210rpx;
+  height: 76rpx;
+  margin: 34rpx 0 0;
+  padding: 0 30rpx;
+  border: 1rpx solid var(--color-primary);
+  border-radius: 8rpx;
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 27rpx;
+  line-height: 74rpx;
+}
+
+.retry-button::after { border: 0; }

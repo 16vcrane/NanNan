@@ -7,6 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.storage import StorageBackend, StorageError
 from app.models.diary import DiaryEntry
 from app.models.image import DiaryImage
+from app.models.reflection import AiReflection
+from app.ai.reflection import PROMPT_VERSION
 
 
 class DiaryNotFoundError(Exception):
@@ -39,6 +41,17 @@ async def create_diary(
     )
     db.add(diary)
     await db.flush()
+
+    reflection = AiReflection(
+        diary_entry_id=diary.id,
+        user_id=user_id,
+        status="pending",
+        prompt_version=PROMPT_VERSION,
+        safety_status="safe",
+    )
+    db.add(reflection)
+    await db.flush()
+    diary.ai_reflection_id = reflection.id
 
     if image_ids:
         result = await db.execute(
@@ -120,6 +133,13 @@ async def delete_diary(
         )
     )
     images = list(result.scalars().all())
+    reflection_result = await db.execute(
+        select(AiReflection).where(
+            AiReflection.diary_entry_id == diary.id,
+            AiReflection.user_id == user_id,
+        )
+    )
+    reflection = reflection_result.scalar_one_or_none()
     try:
         for image in images:
             if image.status == "success":
@@ -131,6 +151,9 @@ async def delete_diary(
     now = datetime.now(timezone.utc)
     diary.deleted_at = now
     diary.updated_at = now
+    if reflection is not None:
+        diary.ai_reflection_id = None
+        await db.delete(reflection)
     for image in images:
         image.status = "deleted"
         image.deleted_at = now

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "AI 回响",
+  "usingComponents": {
+    "reflection-result": "/components/reflection-result/reflection-result"
+  }
+}

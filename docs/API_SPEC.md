@@ -202,3 +202,49 @@ Deletes an uploaded image that has not yet been attached to a diary. Foreign
 or missing IDs return `404 IMAGE_NOT_FOUND`; attached images return
 `409 IMAGE_ALREADY_ATTACHED`; storage failures return
 `503 IMAGE_DELETE_FAILED`.
+
+# Phase 5：AI 回响
+
+所有接口均要求 `Authorization: Bearer <token>`，且仅返回当前用户未删除日记的回响。
+
+## 查询回响
+
+```http
+GET /api/v1/diaries/{diaryId}/reflection
+```
+
+```json
+{
+  "code": 0,
+  "message": "ok",
+  "data": {
+    "id": "uuid",
+    "diaryId": "uuid",
+    "status": "pending|success|failed|blocked",
+    "content": "string|null",
+    "safetyStatus": "safe|sensitive|blocked",
+    "canRetry": false,
+    "attemptCount": 1
+  }
+}
+```
+
+日记不存在、不属于当前用户或已经软删除时返回 `REFLECTION_NOT_FOUND`（404）。
+
+## 重试回响
+
+```http
+POST /api/v1/diaries/{diaryId}/reflection/retry
+```
+
+成功返回 202，后台重新生成：
+
+```json
+{
+  "code": 0,
+  "message": "ok",
+  "data": { "status": "pending", "attemptCount": 1 }
+}
+```
+
+仅 `failed` 且未达到最大尝试次数时允许重试，否则返回 `REFLECTION_RETRY_NOT_ALLOWED`（409）。
