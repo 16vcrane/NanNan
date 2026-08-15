@@ -5,6 +5,10 @@ class Settings(BaseSettings):
     app_env: str = "development"
     database_url: str = "postgresql+asyncpg://nannan:nannan@localhost:5432/nannan"
     redis_url: str = "redis://localhost:6379/0"
+    rate_limit_requests: int = 120
+    rate_limit_window_seconds: int = 60
+    idempotency_lock_seconds: int = 60
+    idempotency_result_seconds: int = 86400
     wechat_app_id: str = ""
     wechat_app_secret: str = ""
     jwt_secret: str = ""

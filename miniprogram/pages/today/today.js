@@ -8,6 +8,10 @@ const MAX_CONTENT_LENGTH = 3000
 const DRAFT_DELAY_MS = 600
 const DEFAULT_ENERGY_SCORE = 50
 
+function createIdempotencyKey() {
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`
+}
+
 function getNavigationMetrics() {
   const fallback = {
     statusBarHeight: 20,
@@ -122,6 +126,7 @@ Page({
     const navigation = getNavigationMetrics()
     this.draftTimer = null
     this.draftUserId = null
+    this.saveIdempotencyKey = null
     this.isDirty = false
     this.setData({
       ...navigation,
@@ -213,6 +218,7 @@ Page({
   },
 
   markDirty() {
+    if (!this.data.saving) this.saveIdempotencyKey = null
     this.isDirty = true
     this.updateUnloadAlert()
   },
@@ -412,6 +418,7 @@ Page({
     }
 
     this.clearDraftTimer()
+    this.saveIdempotencyKey = this.saveIdempotencyKey || createIdempotencyKey()
     this.setData({ saving: true, canSave: false, saveState: 'saving' })
 
     try {
@@ -427,11 +434,12 @@ Page({
         energyScore: this.data.energyScore,
         moodLabel: this.data.moodLabel,
         imageIds: successfulImages.map((image) => image.imageId)
-      })
+      }, this.saveIdempotencyKey)
 
       draftService.clearDraft(this.draftUserId)
       this.data.images.forEach(removeLocalImage)
       this.isDirty = false
+      this.saveIdempotencyKey = null
       this.setData({
         content: '',
         charCount: 0,

@@ -20,11 +20,12 @@ function deleteCurrentUser() {
   })
 }
 
-function createDiary(payload) {
+function createDiary(payload, idempotencyKey) {
   return request({
     url: '/diaries',
     method: 'POST',
-    data: payload
+    data: payload,
+    header: idempotencyKey ? { 'X-Idempotency-Key': idempotencyKey } : undefined
   })
 }
 

@@ -318,3 +318,34 @@ POST /api/v1/diaries/{diaryId}/reflection/retry
 列表图片只返回需要鉴权的私有内容 URL，小程序必须携带登录态下载后再显示，不得拼接公开对象存储地址。
 
 点击列表卡片后调用 `GET /api/v1/diaries/{diaryId}`。详情返回完整原文、全部成功图片、AI 回响和关键帧。删除使用 `DELETE /api/v1/diaries/{diaryId}`，客户端必须二次确认；成功后返回时间轴并刷新第一页。
+
+# Phase 9：工程质量契约
+
+所有响应都包含 `X-Request-ID`。客户端可以传入不超过 128 字符的
+`X-Request-ID` 以便关联日志，否则服务端生成 UUID。日志只记录请求方法、路径、
+状态码、耗时和必要业务标识，不记录 token、日记正文或图片内容。
+
+参数验证错误统一返回：
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "请求参数不符合要求",
+  "data": { "fields": ["content"] }
+}
+```
+
+未处理异常返回 `500 INTERNAL_ERROR`，不向客户端暴露堆栈或内部依赖信息。
+
+API 使用 Redis 固定窗口限流。超过限制返回 `429 RATE_LIMITED`，并通过
+`Retry-After` 响应头告知建议等待秒数。Redis 暂时不可用时限流降级为放行，
+核心记录流程不因此中断。
+
+创建日记支持 `X-Idempotency-Key`，长度为 8 至 128 字符。同一用户使用相同键：
+
+- 首次请求正常创建日记；
+- 首次请求仍在处理时返回 `409 DUPLICATE_SUBMISSION`；
+- 首次请求已完成时返回原有 `diaryId`，不会再次创建日记或 AI 回响任务。
+
+幂等键按用户隔离。小程序在一次保存及网络重试期间复用同一个键，内容发生修改后
+生成新键。

@@ -1,12 +1,20 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, status
+from fastapi import APIRouter, BackgroundTasks, Depends, Header, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.core.database import get_db
 from app.core.security import get_current_user
 from app.core.storage import StorageBackend, get_storage_backend
+from app.core.idempotency import (
+    IdempotencyClaim,
+    IdempotencyState,
+    abort as abort_idempotency,
+    begin as begin_idempotency,
+    build_scope,
+    complete as complete_idempotency,
+)
 from app.models.user import UserProfile
 from app.schemas.diary import (
     CreateDiaryData,
@@ -58,7 +66,23 @@ async def create_diary_endpoint(
     background_tasks: BackgroundTasks,
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
+    idempotency_key: Annotated[
+        str | None, Header(alias="X-Idempotency-Key", min_length=8, max_length=128)
+    ] = None,
 ) -> CreateDiaryResponse:
+    claim: IdempotencyClaim | None = None
+    if idempotency_key:
+        claim = await begin_idempotency(build_scope(current_user.id, idempotency_key))
+        if claim.state is IdempotencyState.COMPLETED:
+            return CreateDiaryResponse(data=CreateDiaryData(**claim.result))
+        if claim.state is IdempotencyState.PENDING:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail={
+                    "code": "DUPLICATE_SUBMISSION",
+                    "message": "相同日记正在保存，请勿重复提交",
+                },
+            )
     try:
         diary = await create_diary(
             db,
@@ -69,17 +93,28 @@ async def create_diary_endpoint(
             image_ids=payload.image_ids,
         )
     except DiaryImageInvalidError as exc:
+        if claim:
+            await abort_idempotency(claim)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={"code": "DIARY_IMAGE_INVALID", "message": "图片无效或不属于当前用户"},
         ) from exc
+    except Exception:
+        if claim:
+            await abort_idempotency(claim)
+        raise
     task_sessions = async_sessionmaker(db.bind, expire_on_commit=False)
     background_tasks.add_task(
         run_reflection_task, diary.ai_reflection_id, task_sessions
     )
-    return CreateDiaryResponse(
+    response = CreateDiaryResponse(
         data=CreateDiaryData(diaryId=diary.id, reflectionStatus="pending")
     )
+    if claim:
+        await complete_idempotency(
+            claim, response.data.model_dump(by_alias=True, mode="json")
+        )
+    return response
 
 
 @router.get("", response_model=DiaryListResponse)
