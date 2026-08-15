@@ -1,0 +1,15 @@
+<view class="page">
+  <view class="page-title">我的</view>
+  <view class="page-subtitle">账户与数据设置</view>
+
+  <view class="surface menu-list">
+    <view class="menu-item" bindtap="openAiInfo" role="button" aria-label="查看 AI 使用说明">
+      <text>AI 使用说明</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item menu-item-disabled">
+      <text>隐私与数据</text>
+      <text class="muted">后续接入</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,7 @@
+.editor-placeholder {
+  min-height: 320rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 40rpx;
+}

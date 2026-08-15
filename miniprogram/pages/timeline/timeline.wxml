@@ -1,0 +1,9 @@
+<view class="page">
+  <view class="page-title">时光</view>
+  <view class="page-subtitle">往日记录会在这里按时间呈现</view>
+
+  <view class="surface empty-state">
+    <text class="empty-title">还没有日记</text>
+    <text class="muted">写下第一篇记录后，它会出现在这里</text>
+  </view>
+</view>

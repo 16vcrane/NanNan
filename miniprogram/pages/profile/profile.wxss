@@ -1,0 +1,27 @@
+.menu-list {
+  margin-top: 40rpx;
+  padding: 0 28rpx;
+}
+
+.menu-item {
+  min-height: 104rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1rpx solid var(--color-border);
+  color: var(--color-text-primary);
+  font-size: 30rpx;
+}
+
+.menu-item:last-child {
+  border-bottom: 0;
+}
+
+.menu-item-disabled {
+  color: var(--color-text-secondary);
+}
+
+.menu-arrow {
+  color: var(--color-text-secondary);
+  font-size: 42rpx;
+}

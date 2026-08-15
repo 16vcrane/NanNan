@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: nannan
+      POSTGRES_USER: nannan
+      POSTGRES_PASSWORD: nannan
+    ports: ["5432:5432"]
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+asyncpg://nannan:nannan@postgres:5432/nannan
+      REDIS_URL: redis://redis:6379/0
+      APP_ENV: development
+    ports: ["8000:8000"]
+    depends_on: [postgres, redis]
+volumes:
+  postgres_data:

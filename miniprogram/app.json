@@ -1,0 +1,39 @@
+{
+  "pages": [
+    "pages/today/today",
+    "pages/timeline/timeline",
+    "pages/profile/profile",
+    "pages/ai-info/ai-info"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "喃喃",
+    "navigationBarBackgroundColor": "#FBF7F0",
+    "backgroundColor": "#FBF7F0",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#8B7A6B",
+    "selectedColor": "#8A5A3B",
+    "backgroundColor": "#FFFDF9",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/today/today",
+        "text": "今日"
+      },
+      {
+        "pagePath": "pages/timeline/timeline",
+        "text": "时光"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

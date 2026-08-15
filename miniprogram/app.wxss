@@ -1,0 +1,56 @@
+:root {
+  --color-page: #FBF7F0;
+  --color-surface: #FFFDF9;
+  --color-text: #3D2C1B;
+  --color-text-muted: #8B7A6B;
+  --color-primary: #8A5A3B;
+  --color-primary-soft: #E8D7C7;
+  --color-border: #E7DDD2;
+  --color-mood-low: #B8B0A5;
+  --color-mood-calm: #A8B9B0;
+  --color-mood-bright: #D4B58A;
+  --color-mood-joy: #D99A72;
+  --color-mood-high: #C97A62;
+  --space-page: 40rpx;
+}
+
+page {
+  min-height: 100%;
+  background: var(--color-page);
+  color: var(--color-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+}
+
+.page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 48rpx var(--space-page) 64rpx;
+}
+
+.page-title {
+  display: block;
+  font-size: 48rpx;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.page-subtitle {
+  display: block;
+  margin-top: 14rpx;
+  color: var(--color-text-muted);
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+.surface {
+  margin-top: 40rpx;
+  padding: 32rpx;
+  background: var(--color-surface);
+  border: 1rpx solid var(--color-border);
+  border-radius: 8rpx;
+  box-sizing: border-box;
+}
+
+.muted {
+  color: var(--color-text-muted);
+}

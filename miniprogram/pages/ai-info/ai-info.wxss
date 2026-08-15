@@ -1,0 +1,16 @@
+.info-section {
+  margin-top: 28rpx;
+}
+
+.info-title {
+  margin-bottom: 16rpx;
+  color: var(--color-text-primary);
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.info-copy {
+  color: var(--color-text-secondary);
+  font-size: 28rpx;
+  line-height: 1.7;
+}

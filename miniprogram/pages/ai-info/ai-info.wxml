@@ -1,0 +1,19 @@
+<view class="page">
+  <view class="page-title">AI 使用说明</view>
+  <view class="page-subtitle">了解智能能力的边界</view>
+
+  <view class="surface info-section">
+    <view class="info-title">AI 会做什么</view>
+    <text class="info-copy">根据你的日记内容生成摘要、情绪分析与温和建议。</text>
+  </view>
+
+  <view class="surface info-section">
+    <view class="info-title">AI 不会做什么</view>
+    <text class="info-copy">AI 结果不构成医疗诊断、心理治疗或其他专业意见。</text>
+  </view>
+
+  <view class="surface info-section">
+    <view class="info-title">日记始终优先</view>
+    <text class="info-copy">即使 AI 暂时不可用，你的日记保存也不会受到影响。</text>
+  </view>
+</view>
