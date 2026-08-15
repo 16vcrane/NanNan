@@ -1,6 +1,11 @@
 <view class="page today-page">
-  <view class="custom-nav">
-    <text class="custom-nav-title">今日心情</text>
+  <view class="custom-nav" style="padding-top: {{statusBarHeight}}px;">
+    <view
+      class="custom-nav-bar"
+      style="height: {{navBarHeight}}px; padding-right: {{navRightInset}}px;"
+    >
+      <text class="custom-nav-title">今日心情</text>
+    </view>
   </view>
   <text class="today-tagline">记录生活的每一份确幸</text>
 
@@ -36,12 +41,24 @@
       </view>
     </view>
 
+    <image-uploader
+      images="{{images}}"
+      max-count="3"
+      disabled="{{saving}}"
+      bind:select="handleImageSelect"
+      bind:remove="handleImageRemove"
+      bind:retry="handleImageRetry"
+    />
+
     <button
       class="save-button"
       loading="{{saving}}"
       disabled="{{!canSave || saving}}"
       bindtap="handleSave"
-    >{{saving ? '保存中' : '保存日记'}}</button>
+    >
+      <text wx:if="{{saving}}" class="save-button-text">保存中</text>
+      <text wx:else class="save-button-text">保存日记</text>
+    </button>
 
     <text wx:if="{{saveState === 'failed'}}" class="save-error">网络暂时不可用，内容仍保存在本机</text>
   </view>

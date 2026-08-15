@@ -15,7 +15,15 @@ global.wx = {
   },
   enableAlertBeforeUnload() {},
   disableAlertBeforeUnload() {},
-  showToast() {}
+  showToast() {},
+  showModal() {},
+  compressImage(options) {
+    options.success({ tempFilePath: options.src })
+  },
+  saveFile(options) {
+    options.success({ savedFilePath: options.tempFilePath })
+  },
+  removeSavedFile() {}
 }
 
 global.getApp = () => ({
@@ -149,4 +157,40 @@ test('successful save sends the exact draft and resets the editor', async () => 
   assert.equal(page.data.saveState, 'success')
   assert.equal(page.isDirty, false)
   assert.equal(draftService.getDraft('user-1'), null)
+})
+
+test('save submits only successful images and does not block on failed images', async () => {
+  const originalCreateDiary = api.createDiary
+  const originalEnsureLogin = auth.ensureLogin
+  let submittedPayload
+  api.createDiary = async (payload) => {
+    submittedPayload = payload
+    return { data: { diaryId: 'diary-with-image' } }
+  }
+  auth.ensureLogin = async () => ({ id: 'user-1' })
+
+  const page = createPage()
+  page.draftTimer = null
+  page.draftUserId = 'user-1'
+  page.isDirty = true
+  page.setData({
+    content: '文字仍然可以保存',
+    images: [
+      { localId: 'ok', imageId: 'image-1', status: 'success', localPath: '/ok.jpg' },
+      { localId: 'failed', imageId: null, status: 'failed', localPath: '/failed.jpg' }
+    ],
+    uploadingCount: 0,
+    canSave: true
+  })
+
+  try {
+    await page.handleSave()
+  } finally {
+    api.createDiary = originalCreateDiary
+    auth.ensureLogin = originalEnsureLogin
+  }
+
+  assert.deepEqual(submittedPayload.imageIds, ['image-1'])
+  assert.equal(page.data.saveState, 'success')
+  assert.deepEqual(page.data.images, [])
 })

@@ -3,6 +3,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from app.schemas.upload import ImageResponse
+
 
 class DiaryCreateRequest(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
@@ -21,9 +23,9 @@ class DiaryCreateRequest(BaseModel):
 
     @field_validator("image_ids")
     @classmethod
-    def images_are_deferred_to_phase_four(cls, value: list[uuid.UUID]) -> list[uuid.UUID]:
-        if value:
-            raise ValueError("图片上传将在后续模块接入")
+    def image_ids_must_be_unique(cls, value: list[uuid.UUID]) -> list[uuid.UUID]:
+        if len(value) != len(set(value)):
+            raise ValueError("不能重复选择同一张图片")
         return value
 
 
@@ -69,7 +71,7 @@ class DiaryListResponse(BaseModel):
 
 class DiaryDetailData(BaseModel):
     diary: DiaryResponse
-    images: list[dict] = Field(default_factory=list)
+    images: list[ImageResponse] = Field(default_factory=list)
     reflection: dict | None = None
     markers: list[dict] = Field(default_factory=list)
 

@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     storage_bucket: str = ""
     storage_access_key: str = ""
     storage_secret_key: str = ""
+    storage_driver: str = "local"
+    storage_local_path: str = "./storage/uploads"
+    storage_region: str = "auto"
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 @lru_cache

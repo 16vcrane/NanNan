@@ -98,7 +98,10 @@ Request:
 ```
 
 Constraints: `content` is 1–3000 characters, `energyScore` is 0–100, and
-`imageIds` must remain empty until the Phase 4 upload module exists.
+`imageIds` contains at most three unique image UUIDs. Every image must have
+been uploaded successfully by the authenticated user and must not already be
+attached to another diary. Invalid or foreign image IDs return
+`400 DIARY_IMAGE_INVALID`.
 
 Response `201`:
 
@@ -134,8 +137,8 @@ Returns only the authenticated user's non-deleted entries, ordered by
 ## GET /api/v1/diaries/{diaryId}
 
 Returns a diary only when both `diaryId` and the authenticated user's ID match.
-The Phase 2 response reserves empty `images`, `reflection`, and `markers` fields
-for later modules.
+`images` contains the diary's successful images in `sortOrder`; `reflection`
+and `markers` remain reserved for later modules.
 
 ## DELETE /api/v1/diaries/{diaryId}
 
@@ -151,3 +154,51 @@ queries. The response is:
 ```
 
 Unknown, deleted, or foreign diary IDs return `404 DIARY_NOT_FOUND`.
+Deleting a diary also deletes its stored image objects and soft-deletes its
+image records. A storage failure returns `503 DIARY_DELETE_FAILED` and leaves
+the diary active so the operation can be retried.
+
+## POST /api/v1/uploads/images
+
+Uploads one authenticated user's image as `multipart/form-data` using the
+field name `file`. The server accepts at most 10 MB, verifies the content with
+Pillow, applies EXIF orientation, limits the longest side to 2048 pixels, and
+stores a metadata-clean JPEG in private storage.
+
+Response `201`:
+
+```json
+{
+  "code": 0,
+  "message": "ok",
+  "data": {
+    "id": "uuid",
+    "status": "success",
+    "url": "/api/v1/uploads/images/uuid/content",
+    "contentType": "image/jpeg",
+    "sizeBytes": 12345,
+    "sortOrder": 0
+  }
+}
+```
+
+Errors:
+
+| Status | Code | Meaning |
+| --- | --- | --- |
+| `422` | `IMAGE_INVALID` | File is empty, over 10 MB, or not a valid image. |
+| `503` | `IMAGE_UPLOAD_FAILED` | Private object storage could not persist the image. |
+
+## GET /api/v1/uploads/images/{imageId}/content
+
+Returns the JPEG bytes only to the owning authenticated user. Missing,
+deleted, failed, or foreign images return `404 IMAGE_NOT_FOUND`. The endpoint
+exists because image objects are private and must not be exposed by public
+storage URLs.
+
+## DELETE /api/v1/uploads/images/{imageId}
+
+Deletes an uploaded image that has not yet been attached to a diary. Foreign
+or missing IDs return `404 IMAGE_NOT_FOUND`; attached images return
+`409 IMAGE_ALREADY_ATTACHED`; storage failures return
+`503 IMAGE_DELETE_FAILED`.

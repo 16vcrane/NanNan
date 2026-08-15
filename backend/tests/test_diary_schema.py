@@ -30,6 +30,24 @@ def test_invalid_energy_score_is_rejected(energy_score: int) -> None:
         DiaryCreateRequest(content="有效内容", energyScore=energy_score)
 
 
-def test_images_are_not_silently_discarded_before_phase_four() -> None:
+def test_up_to_three_unique_images_are_allowed() -> None:
+    image_ids = [uuid.uuid4() for _ in range(3)]
+
+    payload = DiaryCreateRequest(content="有效内容", imageIds=image_ids)
+
+    assert payload.image_ids == image_ids
+
+
+def test_more_than_three_images_are_rejected() -> None:
     with pytest.raises(ValidationError):
-        DiaryCreateRequest(content="有效内容", imageIds=[uuid.uuid4()])
+        DiaryCreateRequest(
+            content="有效内容",
+            imageIds=[uuid.uuid4() for _ in range(4)],
+        )
+
+
+def test_duplicate_images_are_rejected() -> None:
+    image_id = uuid.uuid4()
+
+    with pytest.raises(ValidationError):
+        DiaryCreateRequest(content="有效内容", imageIds=[image_id, image_id])

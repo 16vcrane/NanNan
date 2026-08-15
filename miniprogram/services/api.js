@@ -38,11 +38,19 @@ function deleteDiary(diaryId) {
   })
 }
 
+function deleteUploadedImage(imageId) {
+  return request({
+    url: `/uploads/images/${imageId}`,
+    method: 'DELETE'
+  })
+}
+
 module.exports = {
   login,
   getCurrentUser,
   createDiary,
   getDiaryList,
   getDiaryDetail,
-  deleteDiary
+  deleteDiary,
+  deleteUploadedImage
 }

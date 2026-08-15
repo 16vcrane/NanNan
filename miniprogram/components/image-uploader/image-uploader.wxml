@@ -1,0 +1,40 @@
+<view class="uploader">
+  <view class="uploader-heading">
+    <text class="uploader-title">添加图片（最多{{maxCount}}张）</text>
+  </view>
+
+  <view class="image-grid {{images.length === 0 ? 'image-grid-empty' : ''}}">
+    <button
+      wx:if="{{images.length < maxCount}}"
+      class="add-button"
+      disabled="{{disabled}}"
+      bindtap="chooseImages"
+      aria-label="添加照片"
+    >
+      <text class="add-icon">+</text>
+    </button>
+
+    <view wx:for="{{images}}" wx:key="localId" class="image-item">
+      <image
+        class="image-preview"
+        src="{{item.localPath}}"
+        mode="aspectFill"
+        data-id="{{item.localId}}"
+        bindtap="previewImage"
+      />
+      <view wx:if="{{item.status === 'pending' || item.status === 'uploading'}}" class="image-state">
+        <text>处理中</text>
+      </view>
+      <view wx:if="{{item.status === 'failed'}}" class="image-state image-state-failed">
+        <button class="retry-button" data-id="{{item.localId}}" bindtap="retryImage">重试</button>
+      </view>
+      <button
+        class="remove-button"
+        data-id="{{item.localId}}"
+        bindtap="removeImage"
+        aria-label="移除图片"
+      >×</button>
+    </view>
+
+  </view>
+</view>

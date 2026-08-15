@@ -11,7 +11,7 @@
 
 .mood-question {
   color: var(--color-text);
-  font-size: 40rpx;
+  font-size: 36rpx;
   font-weight: 600;
   line-height: 1.35;
 }
@@ -24,9 +24,10 @@
 
 .mood-arc {
   position: relative;
-  width: min(100%, 520rpx);
-  height: 250rpx;
-  margin: 36rpx auto 0;
+  width: 100%;
+  max-width: 500rpx;
+  height: 222rpx;
+  margin: 24rpx auto 0;
   overflow: hidden;
   touch-action: none;
 }
@@ -41,8 +42,8 @@
 
 .arc-ring {
   top: 0;
-  width: 500rpx;
-  height: 500rpx;
+  width: 460rpx;
+  height: 460rpx;
   background: conic-gradient(
     from 270deg,
     #8F88C9 0deg 34deg,
@@ -55,9 +56,9 @@
 }
 
 .arc-inner {
-  top: 36rpx;
-  width: 428rpx;
-  height: 428rpx;
+  top: 32rpx;
+  width: 396rpx;
+  height: 396rpx;
   background: #FFFDF9;
 }
 
@@ -84,7 +85,7 @@
 }
 
 .mood-scale {
-  min-height: 64rpx;
+  min-height: 54rpx;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
@@ -102,6 +103,6 @@
 }
 
 .mood-value {
-  font-size: 34rpx;
+  font-size: 32rpx;
   font-weight: 600;
 }

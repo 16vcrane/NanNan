@@ -1,0 +1,128 @@
+.uploader {
+  margin-top: 18rpx;
+}
+
+.uploader-heading {
+  min-height: 46rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.uploader-title {
+  color: var(--color-text);
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+.image-grid {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  gap: 14rpx;
+  width: 100%;
+  overflow: hidden;
+}
+
+.image-grid-empty {
+  justify-content: center;
+}
+
+.image-item,
+.add-button {
+  position: relative;
+  width: 132rpx;
+  height: 132rpx;
+  flex: 0 0 132rpx;
+  overflow: hidden;
+  box-sizing: border-box;
+  border-radius: 7rpx;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  background: #EEE5DB;
+}
+
+.image-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(61, 44, 27, 0.55);
+  color: #FFFFFF;
+  font-size: 23rpx;
+}
+
+.image-state-failed {
+  background: rgba(61, 44, 27, 0.66);
+}
+
+.retry-button {
+  min-width: 84rpx;
+  height: 52rpx;
+  margin: 0;
+  padding: 0 16rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.8);
+  border-radius: 6rpx;
+  background: transparent;
+  color: #FFFFFF;
+  font-size: 22rpx;
+  line-height: 50rpx;
+}
+
+.retry-button::after,
+.remove-button::after,
+.add-button::after {
+  border: 0;
+}
+
+.remove-button {
+  position: absolute;
+  z-index: 3;
+  top: 8rpx;
+  right: 8rpx;
+  width: 44rpx;
+  height: 44rpx;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(61, 44, 27, 0.78);
+  color: #FFFFFF;
+  font-size: 30rpx;
+  line-height: 40rpx;
+}
+
+.add-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 2rpx dashed #AFA196;
+  background-color: #FFFDFC;
+  color: #7C7067;
+}
+
+.add-icon {
+  font-size: 52rpx;
+  font-weight: 300;
+  line-height: 1;
+}
+
+@media (max-width: 340px) {
+  .image-grid {
+    gap: 10rpx;
+  }
+
+  .image-item,
+  .add-button {
+    width: 120rpx;
+    height: 120rpx;
+    flex-basis: 120rpx;
+  }
+}

@@ -27,7 +27,7 @@ page {
 .page {
   min-height: 100vh;
   box-sizing: border-box;
-  padding: 48rpx var(--space-page) 64rpx;
+  padding: 48rpx var(--space-page) calc(136rpx + env(safe-area-inset-bottom));
 }
 
 .page-title {

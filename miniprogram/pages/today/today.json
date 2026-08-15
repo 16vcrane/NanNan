@@ -1,6 +1,7 @@
 {
   "navigationStyle": "custom",
   "usingComponents": {
-    "mood-slider": "/components/mood-slider/mood-slider"
+    "mood-slider": "/components/mood-slider/mood-slider",
+    "image-uploader": "/components/image-uploader/image-uploader"
   }
 }
