@@ -5,7 +5,7 @@
 Alembic migrations live in `backend/migrations/versions`. The backend container
 runs `alembic upgrade head` before starting FastAPI.
 
-Current revision: `20260815_0004`.
+Current revision: `20260815_0005`.
 
 ## user_profiles
 
@@ -97,3 +97,23 @@ Indexes:
 索引：`diary_entry_id`、`(user_id, status)`。`diary_entries.ai_reflection_id` 增加到 `ai_reflections.id` 的外键，删除回响时置空。
 
 迁移：`20260815_0004_create_ai_reflections.py`。
+
+# Phase 6：时间轴关键帧
+
+## timeline_markers
+
+| 字段 | 类型 | 约束/说明 |
+| --- | --- | --- |
+| id | UUID | 主键 |
+| diary_entry_id | UUID | `diary_entries.id`，级联删除 |
+| user_id | UUID | `user_profiles.id`，级联删除 |
+| type | varchar(24) | `growth/relationship/place/achievement/custom` |
+| keyword | varchar(32) | 命中的集中词库关键词 |
+| display_text | varchar(48) | 前端展示文本 |
+| color | varchar(16) | 服务端控制的标签颜色 |
+| sort_order | integer | 正文出现顺序，范围 0 至 2 |
+| created_at | timestamptz | 创建时间 |
+
+唯一约束：`(diary_entry_id, keyword)`。索引：`diary_entry_id`、`(user_id, diary_entry_id)`。
+
+迁移：`20260815_0005_create_timeline_markers.py`。

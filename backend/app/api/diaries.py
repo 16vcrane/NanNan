@@ -19,6 +19,7 @@ from app.schemas.diary import (
     DiaryListResponse,
     DiaryResponse,
     DiaryCreateRequest,
+    MarkerResponse,
 )
 from app.services.diary_service import (
     DiaryNotFoundError,
@@ -36,6 +37,7 @@ from app.services.reflection_service import (
     get_reflection,
     run_reflection_task,
 )
+from app.services.marker_service import list_markers_for_diaries
 
 router = APIRouter(prefix="/diaries", tags=["diaries"])
 CurrentUser = Annotated[UserProfile, Depends(get_current_user)]
@@ -87,9 +89,20 @@ async def list_diary_endpoint(
     limit: int = Query(default=20, ge=1, le=100),
 ) -> DiaryListResponse:
     diaries, has_more = await list_diaries(db, current_user.id, page=page, limit=limit)
+    marker_groups = await list_markers_for_diaries(
+        db, current_user.id, [diary.id for diary in diaries]
+    )
+    diary_responses = []
+    for diary in diaries:
+        response = DiaryResponse.model_validate(diary)
+        response.markers = [
+            MarkerResponse.model_validate(marker)
+            for marker in marker_groups.get(diary.id, [])
+        ]
+        diary_responses.append(response)
     return DiaryListResponse(
         data=DiaryListData(
-            list=[DiaryResponse.model_validate(diary) for diary in diaries],
+            list=diary_responses,
             page=page,
             limit=limit,
             hasMore=has_more,
@@ -108,6 +121,13 @@ async def get_diary_endpoint(
     except DiaryNotFoundError:
         raise diary_not_found() from None
     images = await list_diary_images(db, current_user.id, diary.id)
+    marker_groups = await list_markers_for_diaries(
+        db, current_user.id, [diary.id]
+    )
+    markers = [
+        MarkerResponse.model_validate(marker)
+        for marker in marker_groups.get(diary.id, [])
+    ]
     try:
         reflection = serialize_reflection(
             await get_reflection(db, current_user.id, diary.id)
@@ -119,6 +139,7 @@ async def get_diary_endpoint(
             diary=DiaryResponse.model_validate(diary),
             images=images,
             reflection=reflection,
+            markers=markers,
         )
     )
 

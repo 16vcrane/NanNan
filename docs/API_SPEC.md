@@ -82,9 +82,9 @@ Response `401`: `AUTH_INVALID`.
 
 ## POST /api/v1/diaries
 
-Creates a private diary entry for the authenticated user. AI processing is not
-started until Phase 5; `reflectionStatus` is returned as `pending` as the stable
-contract for that later pipeline.
+Creates a private diary entry for the authenticated user. The same transaction
+creates its AI reflection state and up to three rule-based timeline markers;
+AI generation begins after the diary transaction commits.
 
 Request:
 
@@ -126,7 +126,27 @@ Returns only the authenticated user's non-deleted entries, ordered by
   "code": 0,
   "message": "ok",
   "data": {
-    "list": [],
+    "list": [
+      {
+        "id": "uuid",
+        "content": "今天完成了数据库作业。",
+        "energyScore": 65,
+        "moodLabel": "愉悦",
+        "privacyStatus": "private",
+        "createdAt": "2026-08-15T08:00:00Z",
+        "updatedAt": "2026-08-15T08:00:00Z",
+        "markers": [
+          {
+            "id": "uuid",
+            "type": "growth",
+            "keyword": "完成",
+            "displayText": "完成",
+            "color": "#789184",
+            "sortOrder": 0
+          }
+        ]
+      }
+    ],
     "page": 1,
     "limit": 20,
     "hasMore": false
@@ -138,7 +158,8 @@ Returns only the authenticated user's non-deleted entries, ordered by
 
 Returns a diary only when both `diaryId` and the authenticated user's ID match.
 `images` contains the diary's successful images in `sortOrder`; `reflection`
-and `markers` remain reserved for later modules.
+contains its current AI state; `markers` uses the same marker object returned
+by the list endpoint.
 
 ## DELETE /api/v1/diaries/{diaryId}
 
@@ -248,3 +269,9 @@ POST /api/v1/diaries/{diaryId}/reflection/retry
 ```
 
 仅 `failed` 且未达到最大尝试次数时允许重试，否则返回 `REFLECTION_RETRY_NOT_ALLOWED`（409）。
+
+# Phase 6：关键词与关键帧
+
+关键帧随日记创建，不提供客户端写入接口。服务端使用集中词库按关键词在正文中的首次出现位置排序、去重并最多保存 3 个标签。无命中时 `markers` 返回空数组。
+
+当前类型为 `growth | relationship | place | achievement | custom`。列表和详情接口都按 `sortOrder` 返回标签；任何查询均同时校验当前用户。删除日记时同步删除关联关键帧。

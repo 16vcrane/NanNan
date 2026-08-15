@@ -39,6 +39,18 @@ class DiaryResponse(BaseModel):
     privacy_status: str = Field(alias="privacyStatus")
     created_at: datetime = Field(alias="createdAt")
     updated_at: datetime = Field(alias="updatedAt")
+    markers: list["MarkerResponse"] = Field(default_factory=list)
+
+
+class MarkerResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+    id: uuid.UUID
+    type: str
+    keyword: str
+    display_text: str = Field(alias="displayText")
+    color: str
+    sort_order: int = Field(alias="sortOrder")
 
 
 class CreateDiaryData(BaseModel):
@@ -73,7 +85,7 @@ class DiaryDetailData(BaseModel):
     diary: DiaryResponse
     images: list[ImageResponse] = Field(default_factory=list)
     reflection: dict | None = None
-    markers: list[dict] = Field(default_factory=list)
+    markers: list[MarkerResponse] = Field(default_factory=list)
 
 
 class DiaryDetailResponse(BaseModel):

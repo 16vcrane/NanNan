@@ -1,14 +1,16 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Select, select
+from sqlalchemy import Select, delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.storage import StorageBackend, StorageError
 from app.models.diary import DiaryEntry
 from app.models.image import DiaryImage
 from app.models.reflection import AiReflection
+from app.models.marker import TimelineMarker
 from app.ai.reflection import PROMPT_VERSION
+from app.services.marker_service import build_marker_models
 
 
 class DiaryNotFoundError(Exception):
@@ -41,6 +43,10 @@ async def create_diary(
     )
     db.add(diary)
     await db.flush()
+
+    markers = build_marker_models(diary.id, user_id, content)
+    if markers:
+        db.add_all(markers)
 
     reflection = AiReflection(
         diary_entry_id=diary.id,
@@ -154,6 +160,12 @@ async def delete_diary(
     if reflection is not None:
         diary.ai_reflection_id = None
         await db.delete(reflection)
+    await db.execute(
+        delete(TimelineMarker).where(
+            TimelineMarker.diary_entry_id == diary.id,
+            TimelineMarker.user_id == user_id,
+        )
+    )
     for image in images:
         image.status = "deleted"
         image.deleted_at = now

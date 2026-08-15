@@ -12,6 +12,7 @@ from app.core.database import get_db
 from app.main import app
 from app.models.diary import DiaryEntry
 from app.models.reflection import AiReflection
+from app.models.marker import TimelineMarker
 from app.models.user import UserProfile
 from app.services.auth_service import get_or_create_user
 from app.ai.provider import LLMProviderError
@@ -82,6 +83,7 @@ async def test_diary_crud_and_user_isolation(monkeypatch) -> None:
             assert list_response.status_code == 200
             assert len(list_response.json()["data"]["list"]) == 1
             assert list_response.json()["data"]["hasMore"] is True
+            assert list_response.json()["data"]["list"][0]["markers"] == []
 
             detail_response = await client.get(
                 f"/api/v1/diaries/{diary_id}", headers=first_headers
@@ -89,6 +91,7 @@ async def test_diary_crud_and_user_isolation(monkeypatch) -> None:
             assert detail_response.status_code == 200
             assert detail_response.json()["data"]["diary"]["energyScore"] == 72
             assert detail_response.json()["data"]["images"] == []
+            assert detail_response.json()["data"]["markers"][0]["keyword"] == "完成"
 
             foreign_response = await client.get(
                 f"/api/v1/diaries/{diary_id}", headers=second_headers
@@ -143,6 +146,12 @@ async def test_diary_crud_and_user_isolation(monkeypatch) -> None:
                     )
                 )
                 assert deleted_reflection is None
+                deleted_markers = await db.scalars(
+                    select(TimelineMarker).where(
+                        TimelineMarker.diary_entry_id == uuid.UUID(diary_id)
+                    )
+                )
+                assert list(deleted_markers) == []
     finally:
         app.dependency_overrides.pop(get_db, None)
         async with session_factory() as db:

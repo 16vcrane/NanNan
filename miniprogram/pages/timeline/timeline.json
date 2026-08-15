@@ -1,3 +1,5 @@
 {
-  "navigationBarTitleText": "时光"
+  "navigationBarTitleText": "时光",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
 }

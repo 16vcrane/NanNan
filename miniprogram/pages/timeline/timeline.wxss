@@ -13,3 +13,157 @@
   font-size: 30rpx;
   font-weight: 600;
 }
+
+.timeline-state {
+  min-height: 320rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24rpx;
+}
+
+.loading-line {
+  width: 96rpx;
+  height: 4rpx;
+  overflow: hidden;
+  border-radius: 2rpx;
+  background: var(--color-primary-soft);
+  position: relative;
+}
+
+.loading-line::after {
+  content: '';
+  width: 36rpx;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  background: var(--color-primary);
+  animation: loading 1.2s infinite ease-in-out;
+}
+
+@keyframes loading {
+  0% { transform: translateX(-36rpx); }
+  100% { transform: translateX(96rpx); }
+}
+
+.write-action,
+.retry-action {
+  min-width: 200rpx;
+  height: 72rpx;
+  margin: 16rpx 0 0;
+  padding: 0 28rpx;
+  border: 1rpx solid var(--color-primary);
+  border-radius: 8rpx;
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 26rpx;
+  line-height: 70rpx;
+}
+
+.write-action::after,
+.retry-action::after { border: 0; }
+
+.timeline-list {
+  margin-top: 40rpx;
+}
+
+.timeline-entry {
+  display: grid;
+  grid-template-columns: 34rpx minmax(0, 1fr);
+  gap: 18rpx;
+}
+
+.timeline-rail {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timeline-dot {
+  width: 16rpx;
+  height: 16rpx;
+  flex: 0 0 auto;
+  margin-top: 34rpx;
+  box-sizing: border-box;
+  border: 3rpx solid var(--color-page);
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 0 2rpx var(--color-primary-soft);
+}
+
+.timeline-line {
+  width: 2rpx;
+  min-height: 40rpx;
+  flex: 1;
+  background: var(--color-border);
+}
+
+.timeline-entry:last-child .timeline-line { background: transparent; }
+
+.diary-card {
+  min-width: 0;
+  margin-bottom: 28rpx;
+  padding: 28rpx;
+  box-sizing: border-box;
+  border: 1rpx solid var(--color-border);
+  border-radius: 8rpx;
+  background: var(--color-surface);
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.date-text {
+  color: var(--color-text-muted);
+  font-size: 23rpx;
+  font-variant-numeric: tabular-nums;
+}
+
+.mood-text {
+  color: var(--color-primary);
+  font-size: 23rpx;
+}
+
+.diary-summary {
+  display: block;
+  margin-top: 18rpx;
+  color: var(--color-text);
+  font-size: 28rpx;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.marker-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 22rpx;
+}
+
+.marker {
+  height: 44rpx;
+  display: inline-flex;
+  align-items: center;
+  gap: 9rpx;
+  padding: 0 14rpx;
+  box-sizing: border-box;
+  border: 1rpx solid;
+  border-radius: 6rpx;
+  background: #fffdf9;
+  font-size: 22rpx;
+  line-height: 42rpx;
+}
+
+.marker-pin {
+  width: 8rpx;
+  height: 8rpx;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
