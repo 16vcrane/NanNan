@@ -1,0 +1,87 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-nannan}
+      POSTGRES_USER: ${POSTGRES_USER:-nannan}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:?set REDIS_PASSWORD}"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    expose:
+      - "8000"
+    environment:
+      APP_ENV: production
+      PUBLIC_BASE_URL: https://${PUBLIC_DOMAIN:?set PUBLIC_DOMAIN}
+      FORCE_HTTPS: "true"
+      ALLOWED_HOSTS: ${PUBLIC_DOMAIN},backend,localhost,127.0.0.1
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-nannan}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nannan}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+      RATE_LIMIT_REQUESTS: ${RATE_LIMIT_REQUESTS:-120}
+      RATE_LIMIT_WINDOW_SECONDS: ${RATE_LIMIT_WINDOW_SECONDS:-60}
+      IDEMPOTENCY_LOCK_SECONDS: ${IDEMPOTENCY_LOCK_SECONDS:-60}
+      IDEMPOTENCY_RESULT_SECONDS: ${IDEMPOTENCY_RESULT_SECONDS:-86400}
+      WECHAT_APP_ID: ${WECHAT_APP_ID:?set WECHAT_APP_ID}
+      WECHAT_APP_SECRET: ${WECHAT_APP_SECRET:?set WECHAT_APP_SECRET}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET}
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${JWT_ACCESS_TOKEN_EXPIRE_MINUTES:-120}
+      LLM_PROVIDER: ${LLM_PROVIDER:?set LLM_PROVIDER}
+      LLM_MODEL: ${LLM_MODEL:?set LLM_MODEL}
+      LLM_API_KEY: ${LLM_API_KEY:?set LLM_API_KEY}
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      LLM_TIMEOUT_SECONDS: ${LLM_TIMEOUT_SECONDS:-30}
+      REFLECTION_MAX_ATTEMPTS: ${REFLECTION_MAX_ATTEMPTS:-3}
+      STORAGE_DRIVER: s3
+      STORAGE_ENDPOINT: ${STORAGE_ENDPOINT:?set STORAGE_ENDPOINT}
+      STORAGE_BUCKET: ${STORAGE_BUCKET:?set STORAGE_BUCKET}
+      STORAGE_ACCESS_KEY: ${STORAGE_ACCESS_KEY:?set STORAGE_ACCESS_KEY}
+      STORAGE_SECRET_KEY: ${STORAGE_SECRET_KEY:?set STORAGE_SECRET_KEY}
+      STORAGE_REGION: ${STORAGE_REGION:-auto}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  caddy:
+    image: caddy:2.8-alpine
+    restart: unless-stopped
+    environment:
+      PUBLIC_DOMAIN: ${PUBLIC_DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  redis_data:
+  caddy_data:
+  caddy_config:

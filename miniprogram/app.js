@@ -1,9 +1,11 @@
 const auth = require('./services/auth')
+const { getApiBaseUrl } = require('./config/environment')
 
 App({
   onLaunch() {
     this.globalData = {
       ...this.globalData,
+      apiBaseUrl: getApiBaseUrl(),
       launchedAt: Date.now()
     }
     this.loginPromise = auth.ensureLogin().catch((error) => {
@@ -16,6 +18,6 @@ App({
     userInfo: null,
     accessToken: null,
     authStatus: 'idle',
-    apiBaseUrl: 'http://127.0.0.1:8000/api/v1'
+    apiBaseUrl: ''
   }
 })

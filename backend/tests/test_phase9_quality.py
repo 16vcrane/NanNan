@@ -96,6 +96,8 @@ async def test_request_id_and_validation_error_shape(monkeypatch) -> None:
 
     assert response.status_code == 422
     assert response.headers["x-request-id"] == "phase9-request"
+    assert response.headers["x-content-type-options"] == "nosniff"
+    assert response.headers["x-frame-options"] == "DENY"
     assert response.json()["code"] == "VALIDATION_ERROR"
     assert response.json()["data"]["fields"] == ["code"]
 

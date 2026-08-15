@@ -5,6 +5,8 @@ import uuid
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from app.api.auth import router as auth_router
 from app.api.diaries import router as diaries_router
@@ -14,11 +16,26 @@ from app.api.uploads import router as uploads_router
 from app.api.users import router as users_router
 from app.core.logging import configure_logging, request_id_context
 from app.core.rate_limit import check_rate_limit
+from app.core.config import get_settings
 
 configure_logging()
 logger = logging.getLogger(__name__)
+settings = get_settings()
 
-app = FastAPI(title="NanNan API", version="0.1.0")
+production = settings.app_env.lower() == "production"
+app = FastAPI(
+    title="NanNan API",
+    version="1.0.0",
+    docs_url=None if production else "/docs",
+    redoc_url=None if production else "/redoc",
+    openapi_url=None if production else "/openapi.json",
+)
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=settings.allowed_host_list or ["localhost"],
+)
+if settings.force_https:
+    app.add_middleware(HTTPSRedirectMiddleware)
 app.include_router(health_router, prefix="/api/v1")
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(diaries_router, prefix="/api/v1")
@@ -59,6 +76,11 @@ async def request_context_middleware(request: Request, call_next):
             response = await call_next(request)
         status_code = response.status_code
         response.headers["X-Request-ID"] = request_id
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers["X-Frame-Options"] = "DENY"
+        if request.url.scheme == "https" or settings.force_https:
+            response.headers["Strict-Transport-Security"] = "max-age=31536000"
         return response
     finally:
         latency_ms = round((time.perf_counter() - started) * 1000, 2)

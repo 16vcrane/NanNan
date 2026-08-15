@@ -211,3 +211,35 @@ test('drag reorder changes image submission order', () => {
 
   assert.deepEqual(page.data.images.map((image) => image.localId), ['second', 'third', 'first'])
 })
+
+test('weak network keeps the draft and reuses the idempotency key', async () => {
+  const originalCreateDiary = api.createDiary
+  const keys = []
+  let attempt = 0
+  api.createDiary = async (_payload, key) => {
+    keys.push(key)
+    attempt += 1
+    if (attempt === 1) throw new Error('network unavailable')
+    return { data: { diaryId: 'recovered-diary' } }
+  }
+
+  const page = createPage()
+  page.draftTimer = null
+  page.draftUserId = 'user-1'
+  page.isDirty = true
+  page.setData({ content: '弱网下也不能丢失', canSave: true })
+
+  try {
+    await page.handleSave()
+    assert.equal(page.data.saveState, 'failed')
+    assert.equal(draftService.getDraft('user-1').content, '弱网下也不能丢失')
+
+    await page.handleSave()
+  } finally {
+    api.createDiary = originalCreateDiary
+  }
+
+  assert.equal(keys[0], keys[1])
+  assert.equal(page.data.saveState, 'success')
+  assert.equal(draftService.getDraft('user-1'), null)
+})
