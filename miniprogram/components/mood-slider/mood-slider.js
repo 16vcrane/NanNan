@@ -8,6 +8,10 @@ Component({
       observer(value) {
         this.updateMood(value)
       }
+    },
+    surfaceColor: {
+      type: String,
+      value: '#FBF1E5'
     }
   },
 
@@ -69,8 +73,8 @@ Component({
       const normalized = Math.max(0, Math.min(100, Number(value)))
       const angle = Math.PI - (normalized / 100) * Math.PI
       return {
-        left: 50 + Math.cos(angle) * 38,
-        top: 100 - Math.sin(angle) * 74
+        left: 50 + Math.cos(angle) * 32,
+        top: 95 - Math.sin(angle) * 66
       }
     },
 

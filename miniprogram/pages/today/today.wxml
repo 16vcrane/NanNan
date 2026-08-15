@@ -23,7 +23,11 @@
       </view>
     </view>
 
-    <mood-slider value="{{energyScore}}" bind:change="handleMoodChange" />
+    <mood-slider
+      value="{{energyScore}}"
+      surface-color="#F2F4EA"
+      bind:change="handleMoodChange"
+    />
 
     <view class="editor-area">
       <textarea
