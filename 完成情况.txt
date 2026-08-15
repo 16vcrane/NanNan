@@ -1,0 +1,43 @@
+Phase 0 工程初始化已完成，并按约定暂停。 
+完成内容： 
+- FastAPI 后端与 /api/v1/health 
+- PostgreSQL、SQLAlchemy Async、Redis 基础连接 
+- Docker Compose 与环境变量模板 
+- 基础日志配置 
+- 小程序全局配置、Design Tokens 
+- 今日、时光、我的、AI 使用说明四个基础页面
+- 清理微信小程序默认示例代码 
+- Git 仓库结构与忽略规则 主要文件：backend/app/main.py、backend/app/api/health.py、docker-compose.yml、miniprogram/app.json、miniprogram/ app.wxss。 
+
+验证结果： - Python 编译通过 - JavaScript 语法检查通过 - JSON 解析通过 - Compose 配置检查通过 - 尾随空白检查通过 - Git 仓库位于 master，已提交、已推送 - Docker 已连接，容器启动、数据库/Redis 实际连接及 健康接口运行验证已完成 - 本机 Python 缺少 asyncpg，无法替代容器完成运行验证；它已正确声明在 requirements.txt 
+
+
+Phase 1 微信登录模块已完成，并按约定暂停。
+
+  完成内容：
+
+  - 微信 jscode2session 身份交换
+  - UserProfile 创建与重复登录复用
+  - JWT 登录态签发、校验和过期处理
+  - get_current_user 统一身份依赖
+  - POST /api/v1/auth/login
+  - GET /api/v1/users/me
+  - 小程序自动登录、token 持久化及登录态恢复
+  - Alembic 数据库迁移
+  - 统一认证错误响应
+  - 同步 API 与数据库文档
+
+  主要实现位于 backend/app/api/auth.py、backend/app/core/security.py、backend/app/models/user.py、miniprogram/services/auth.js、docs/API_SPEC.md 和 docs/DATABASE.md。
+
+  验证结果：
+
+  - 自动化测试：9 passed
+  - 同一测试 openid 重复登录返回相同用户 ID
+  - Alembic：20260815_0001 (head)
+  - 健康接口：数据库、Redis 均为 ok
+  - 无 token 请求 /users/me：正确返回 401 AUTH_INVALID
+  - Python、JavaScript、JSON 和 Compose 检查全部通过
+  - 三个 Docker 服务当前仍在运行
+  - 测试数据残留数量：0
+
+  真实微信登录需要在本地 .env 配置至少 32 位的 JWT_SECRET、WECHAT_APP_ID 和 WECHAT_APP_SECRET。仓库中没有写入这些敏感值。

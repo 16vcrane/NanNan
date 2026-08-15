@@ -16,6 +16,11 @@ services:
       DATABASE_URL: postgresql+asyncpg://nannan:nannan@postgres:5432/nannan
       REDIS_URL: redis://redis:6379/0
       APP_ENV: development
+      WECHAT_APP_ID: ${WECHAT_APP_ID:-}
+      WECHAT_APP_SECRET: ${WECHAT_APP_SECRET:-}
+      JWT_SECRET: ${JWT_SECRET:-}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${JWT_ACCESS_TOKEN_EXPIRE_MINUTES:-120}
     ports: ["8000:8000"]
     depends_on: [postgres, redis]
 volumes:
