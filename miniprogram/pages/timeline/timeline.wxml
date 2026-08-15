@@ -7,7 +7,7 @@
     <text class="muted">正在翻开时光</text>
   </view>
 
-  <view wx:elif="{{loadError}}" class="timeline-state">
+  <view wx:elif="{{loadError && !diaries.length}}" class="timeline-state">
     <text class="empty-title">暂时没能打开时光</text>
     <button class="retry-action" bindtap="loadDiaries">重新加载</button>
   </view>
@@ -24,25 +24,10 @@
         <view class="timeline-dot"></view>
         <view class="timeline-line"></view>
       </view>
-      <view class="diary-card">
-        <view class="card-meta">
-          <text class="date-text">{{item.dateText}}</text>
-          <text class="mood-text">{{item.moodText}}</text>
-        </view>
-        <text class="diary-summary">{{item.summary}}</text>
-        <view wx:if="{{item.markers.length}}" class="marker-list">
-          <view
-            wx:for="{{item.markers}}"
-            wx:for-item="marker"
-            wx:key="id"
-            class="marker"
-            style="border-color: {{marker.color}}; color: {{marker.color}};"
-          >
-            <view class="marker-pin" style="background: {{marker.color}};"></view>
-            <text>{{marker.displayText}}</text>
-          </view>
-        </view>
-      </view>
+      <diary-card class="entry-card" diary="{{item}}" bind:select="handleDiarySelect" />
     </view>
+    <view wx:if="{{loadingMore}}" class="load-more-text">正在加载更多</view>
+    <button wx:elif="{{loadMoreError}}" class="load-more-action" bindtap="loadDiaries">加载失败，点击重试</button>
+    <view wx:elif="{{!hasMore}}" class="load-more-text">已经看到全部记录</view>
   </view>
 </view>

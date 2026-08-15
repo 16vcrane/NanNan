@@ -21,6 +21,7 @@ from app.schemas.diary import (
     DiaryCreateRequest,
     MarkerResponse,
 )
+from app.schemas.upload import ImageResponse
 from app.services.diary_service import (
     DiaryNotFoundError,
     DiaryDeleteError,
@@ -30,7 +31,7 @@ from app.services.diary_service import (
     get_diary,
     list_diaries,
 )
-from app.services.image_service import list_diary_images
+from app.services.image_service import list_diary_images, list_images_for_diaries
 from app.api.reflections import serialize_reflection
 from app.services.reflection_service import (
     ReflectionNotFoundError,
@@ -92,12 +93,19 @@ async def list_diary_endpoint(
     marker_groups = await list_markers_for_diaries(
         db, current_user.id, [diary.id for diary in diaries]
     )
+    image_groups = await list_images_for_diaries(
+        db, current_user.id, [diary.id for diary in diaries]
+    )
     diary_responses = []
     for diary in diaries:
         response = DiaryResponse.model_validate(diary)
         response.markers = [
             MarkerResponse.model_validate(marker)
             for marker in marker_groups.get(diary.id, [])
+        ]
+        response.images = [
+            ImageResponse.model_validate(image)
+            for image in image_groups.get(diary.id, [])
         ]
         diary_responses.append(response)
     return DiaryListResponse(

@@ -135,6 +135,16 @@ Returns only the authenticated user's non-deleted entries, ordered by
         "privacyStatus": "private",
         "createdAt": "2026-08-15T08:00:00Z",
         "updatedAt": "2026-08-15T08:00:00Z",
+        "images": [
+          {
+            "id": "uuid",
+            "status": "success",
+            "url": "/api/v1/uploads/images/uuid/content",
+            "contentType": "image/jpeg",
+            "sizeBytes": 12345,
+            "sortOrder": 0
+          }
+        ],
         "markers": [
           {
             "id": "uuid",
@@ -275,3 +285,11 @@ POST /api/v1/diaries/{diaryId}/reflection/retry
 关键帧随日记创建，不提供客户端写入接口。服务端使用集中词库按关键词在正文中的首次出现位置排序、去重并最多保存 3 个标签。无命中时 `markers` 返回空数组。
 
 当前类型为 `growth | relationship | place | achievement | custom`。列表和详情接口都按 `sortOrder` 返回标签；任何查询均同时校验当前用户。删除日记时同步删除关联关键帧。
+
+# Phase 7：时间轴与详情
+
+时间轴复用 `GET /api/v1/diaries?page={page}&limit={limit}`。`page` 从 1 开始，`limit` 范围为 1 至 100，默认 20；响应中的 `hasMore` 决定客户端是否继续请求下一页。服务端按 `createdAt DESC, id DESC` 稳定排序，并批量加载当前页的图片和关键帧。
+
+列表图片只返回需要鉴权的私有内容 URL，小程序必须携带登录态下载后再显示，不得拼接公开对象存储地址。
+
+点击列表卡片后调用 `GET /api/v1/diaries/{diaryId}`。详情返回完整原文、全部成功图片、AI 回响和关键帧。删除使用 `DELETE /api/v1/diaries/{diaryId}`，客户端必须二次确认；成功后返回时间轴并刷新第一页。

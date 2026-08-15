@@ -126,6 +126,16 @@ async def test_image_upload_permissions_attachment_and_cleanup(monkeypatch, tmp_
             assert detail.status_code == 200
             assert [item["id"] for item in detail.json()["data"]["images"]] == [image_id]
 
+            timeline = await client.get(
+                "/api/v1/diaries?page=1&limit=20", headers=first_headers
+            )
+            timeline_item = next(
+                item
+                for item in timeline.json()["data"]["list"]
+                if item["id"] == diary_id
+            )
+            assert [item["id"] for item in timeline_item["images"]] == [image_id]
+
             attached_delete = await client.delete(
                 f"/api/v1/uploads/images/{image_id}", headers=first_headers
             )

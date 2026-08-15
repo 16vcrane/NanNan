@@ -129,6 +129,29 @@ async def list_diary_images(
     return list(result.scalars().all())
 
 
+async def list_images_for_diaries(
+    db: AsyncSession,
+    user_id: uuid.UUID,
+    diary_ids: list[uuid.UUID],
+) -> dict[uuid.UUID, list[DiaryImage]]:
+    grouped = {diary_id: [] for diary_id in diary_ids}
+    if not diary_ids:
+        return grouped
+    result = await db.execute(
+        select(DiaryImage)
+        .where(
+            DiaryImage.user_id == user_id,
+            DiaryImage.diary_id.in_(diary_ids),
+            DiaryImage.status == "success",
+            DiaryImage.deleted_at.is_(None),
+        )
+        .order_by(DiaryImage.diary_id, DiaryImage.sort_order.asc())
+    )
+    for image in result.scalars().all():
+        grouped[image.diary_id].append(image)
+    return grouped
+
+
 async def delete_unattached_image(
     db: AsyncSession,
     user_id: uuid.UUID,

@@ -1,0 +1,70 @@
+<view class="page detail-page">
+  <view wx:if="{{loading}}" class="detail-state">
+    <view class="loading-line"></view>
+    <text class="muted">正在打开这一页</text>
+  </view>
+
+  <view wx:elif="{{loadError}}" class="detail-state">
+    <text class="state-title">暂时没能打开这篇日记</text>
+    <button class="retry-action" bindtap="loadDetail">重新加载</button>
+  </view>
+
+  <block wx:elif="{{diary}}">
+    <view class="detail-meta">
+      <text class="date-text">{{diary.dateText}}</text>
+      <view class="mood-label">
+        <view class="mood-dot" style="background: {{diary.moodColor}};"></view>
+        <text>{{diary.moodText}}</text>
+      </view>
+    </view>
+
+    <view class="diary-section">
+      <text class="diary-content">{{diary.content}}</text>
+    </view>
+
+    <view wx:if="{{images.length}}" class="image-grid image-grid-{{images.length}}">
+      <view
+        wx:for="{{images}}"
+        wx:key="id"
+        class="detail-image-wrap"
+        data-id="{{item.id}}"
+        bindtap="previewImage"
+      >
+        <image wx:if="{{item.localPath}}" class="detail-image" src="{{item.localPath}}" mode="aspectFill" />
+        <view wx:else class="image-placeholder">
+          <text>{{item.downloadFailed ? '加载失败' : '加载中'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{markers.length}}" class="marker-list">
+      <view
+        wx:for="{{markers}}"
+        wx:key="id"
+        class="marker"
+        style="border-color: {{item.color}}; color: {{item.color}};"
+      >
+        <view class="marker-pin" style="background: {{item.color}};"></view>
+        <text>{{item.displayText}}</text>
+      </view>
+    </view>
+
+    <view class="reflection-section">
+      <text class="section-label">AI 回响</text>
+      <reflection-result
+        status="{{reflectionStatus}}"
+        content="{{reflectionContent}}"
+        can-retry="{{reflectionCanRetry}}"
+        retrying="{{reflectionRetrying}}"
+        bind:retry="handleReflectionRetry"
+      />
+    </view>
+
+    <button
+      class="delete-action"
+      loading="{{deleting}}"
+      disabled="{{deleting}}"
+      bindtap="handleDelete"
+    >删除日记</button>
+  </block>
+</view>

@@ -40,6 +40,7 @@ class DiaryResponse(BaseModel):
     created_at: datetime = Field(alias="createdAt")
     updated_at: datetime = Field(alias="updatedAt")
     markers: list["MarkerResponse"] = Field(default_factory=list)
+    images: list[ImageResponse] = Field(default_factory=list)
 
 
 class MarkerResponse(BaseModel):

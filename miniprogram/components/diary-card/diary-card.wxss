@@ -1,0 +1,124 @@
+.diary-card {
+  min-width: 0;
+  margin-bottom: 28rpx;
+  padding: 28rpx;
+  box-sizing: border-box;
+  border: 1rpx solid var(--color-border);
+  border-radius: 8rpx;
+  background: var(--color-surface);
+}
+
+.diary-card:active { background: #faf4ec; }
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.date-text {
+  color: var(--color-text-muted);
+  font-size: 23rpx;
+  font-variant-numeric: tabular-nums;
+}
+
+.mood-label {
+  display: flex;
+  align-items: center;
+  gap: 9rpx;
+  color: var(--color-text-muted);
+  font-size: 23rpx;
+}
+
+.mood-dot {
+  width: 10rpx;
+  height: 10rpx;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.card-body {
+  min-width: 0;
+  margin-top: 18rpx;
+}
+
+.card-body.has-image {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 132rpx;
+  gap: 22rpx;
+  align-items: start;
+}
+
+.diary-summary {
+  min-width: 0;
+  display: block;
+  color: var(--color-text);
+  font-size: 28rpx;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.thumbnail-wrap {
+  width: 132rpx;
+  height: 112rpx;
+  position: relative;
+  overflow: hidden;
+  border-radius: 6rpx;
+  background: #eee5dc;
+}
+
+.thumbnail {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.thumbnail-loading {
+  background: linear-gradient(90deg, #eee5dc, #f8f1e9, #eee5dc);
+}
+
+.image-count {
+  min-width: 38rpx;
+  height: 34rpx;
+  position: absolute;
+  right: 8rpx;
+  bottom: 8rpx;
+  padding: 0 8rpx;
+  box-sizing: border-box;
+  border-radius: 5rpx;
+  background: rgba(61, 44, 27, 0.74);
+  color: #fff;
+  font-size: 20rpx;
+  line-height: 34rpx;
+  text-align: center;
+}
+
+.marker-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 22rpx;
+}
+
+.marker {
+  height: 44rpx;
+  display: inline-flex;
+  align-items: center;
+  gap: 9rpx;
+  padding: 0 14rpx;
+  box-sizing: border-box;
+  border: 1rpx solid;
+  border-radius: 6rpx;
+  background: #fffdf9;
+  font-size: 22rpx;
+  line-height: 42rpx;
+}
+
+.marker-pin {
+  width: 8rpx;
+  height: 8rpx;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}

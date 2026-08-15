@@ -1,5 +1,8 @@
 {
   "navigationBarTitleText": "时光",
   "enablePullDownRefresh": true,
-  "backgroundTextStyle": "dark"
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "diary-card": "/components/diary-card/diary-card"
+  }
 }

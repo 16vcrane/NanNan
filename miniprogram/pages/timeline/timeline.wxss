@@ -102,68 +102,27 @@
 
 .timeline-entry:last-child .timeline-line { background: transparent; }
 
-.diary-card {
+.entry-card {
   min-width: 0;
-  margin-bottom: 28rpx;
-  padding: 28rpx;
-  box-sizing: border-box;
-  border: 1rpx solid var(--color-border);
-  border-radius: 8rpx;
-  background: var(--color-surface);
+  display: block;
 }
 
-.card-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20rpx;
-}
-
-.date-text {
+.load-more-text {
+  padding: 12rpx 0 28rpx;
   color: var(--color-text-muted);
   font-size: 23rpx;
-  font-variant-numeric: tabular-nums;
+  text-align: center;
 }
 
-.mood-text {
+.load-more-action {
+  height: 70rpx;
+  margin: 0 auto 24rpx;
+  padding: 0 24rpx;
+  border: 0;
+  background: transparent;
   color: var(--color-primary);
-  font-size: 23rpx;
+  font-size: 24rpx;
+  line-height: 70rpx;
 }
 
-.diary-summary {
-  display: block;
-  margin-top: 18rpx;
-  color: var(--color-text);
-  font-size: 28rpx;
-  line-height: 1.75;
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-
-.marker-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12rpx;
-  margin-top: 22rpx;
-}
-
-.marker {
-  height: 44rpx;
-  display: inline-flex;
-  align-items: center;
-  gap: 9rpx;
-  padding: 0 14rpx;
-  box-sizing: border-box;
-  border: 1rpx solid;
-  border-radius: 6rpx;
-  background: #fffdf9;
-  font-size: 22rpx;
-  line-height: 42rpx;
-}
-
-.marker-pin {
-  width: 8rpx;
-  height: 8rpx;
-  flex: 0 0 auto;
-  border-radius: 50%;
-}
+.load-more-action::after { border: 0; }

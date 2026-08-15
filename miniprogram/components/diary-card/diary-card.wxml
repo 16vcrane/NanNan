@@ -1,0 +1,41 @@
+<view
+  class="diary-card"
+  role="button"
+  aria-label="查看 {{diary.dateText}} 的日记"
+  bindtap="handleSelect"
+>
+  <view class="card-meta">
+    <text class="date-text">{{diary.dateText}}</text>
+    <view class="mood-label">
+      <view class="mood-dot" style="background: {{diary.moodColor}};"></view>
+      <text>{{diary.moodText}}</text>
+    </view>
+  </view>
+
+  <view class="card-body {{diary.images.length ? 'has-image' : ''}}">
+    <text class="diary-summary">{{diary.summary}}</text>
+    <view wx:if="{{diary.images.length}}" class="thumbnail-wrap">
+      <image
+        wx:if="{{diary.thumbnailPath}}"
+        class="thumbnail"
+        src="{{diary.thumbnailPath}}"
+        mode="aspectFill"
+      />
+      <view wx:else class="thumbnail thumbnail-loading"></view>
+      <text wx:if="{{diary.images.length > 1}}" class="image-count">+{{diary.images.length - 1}}</text>
+    </view>
+  </view>
+
+  <view wx:if="{{diary.markers.length}}" class="marker-list">
+    <view
+      wx:for="{{diary.markers}}"
+      wx:for-item="marker"
+      wx:key="id"
+      class="marker"
+      style="border-color: {{marker.color}}; color: {{marker.color}};"
+    >
+      <view class="marker-pin" style="background: {{marker.color}};"></view>
+      <text>{{marker.displayText}}</text>
+    </view>
+  </view>
+</view>

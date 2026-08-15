@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "日记详情",
+  "usingComponents": {
+    "reflection-result": "/components/reflection-result/reflection-result"
+  }
+}
