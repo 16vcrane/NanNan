@@ -13,7 +13,36 @@ function getCurrentUser() {
   return request({ url: '/users/me' })
 }
 
+function createDiary(payload) {
+  return request({
+    url: '/diaries',
+    method: 'POST',
+    data: payload
+  })
+}
+
+function getDiaryList(params = {}) {
+  const page = params.page || 1
+  const limit = params.limit || 20
+  return request({ url: `/diaries?page=${page}&limit=${limit}` })
+}
+
+function getDiaryDetail(diaryId) {
+  return request({ url: `/diaries/${diaryId}` })
+}
+
+function deleteDiary(diaryId) {
+  return request({
+    url: `/diaries/${diaryId}`,
+    method: 'DELETE'
+  })
+}
+
 module.exports = {
   login,
-  getCurrentUser
+  getCurrentUser,
+  createDiary,
+  getDiaryList,
+  getDiaryDetail,
+  deleteDiary
 }

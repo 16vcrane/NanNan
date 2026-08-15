@@ -26,6 +26,7 @@ function request(options) {
 
         if (response.statusCode === 401) {
           storage.clearAccessToken()
+          storage.clearAuthUser()
           app.globalData.accessToken = null
           app.globalData.userInfo = null
           app.globalData.authStatus = 'expired'

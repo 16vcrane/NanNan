@@ -1,0 +1,32 @@
+<view class="mood-control">
+  <view class="mood-heading">
+    <text class="mood-question">今天过得怎么样？</text>
+    <text class="mood-hint">给自己的今天，打个分吧</text>
+  </view>
+
+  <view
+    class="mood-arc"
+    bindtouchstart="handleTouch"
+    bindtouchmove="handleTouch"
+    role="slider"
+    aria-label="今日能量值"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="{{value}}"
+  >
+    <view class="arc-ring"></view>
+    <view class="arc-inner"></view>
+    <view
+      class="arc-knob"
+      style="left: {{knobLeft}}%; top: {{knobTop}}%; border-color: {{mood.color}};"
+    >
+      <view class="arc-knob-core" style="background: {{mood.color}};"></view>
+    </view>
+  </view>
+
+  <view class="mood-scale">
+    <text>低落</text>
+    <text class="mood-value" style="color: {{mood.color}}">{{mood.label}}</text>
+    <text>高亢</text>
+  </view>
+</view>

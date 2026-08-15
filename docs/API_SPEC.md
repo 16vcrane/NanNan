@@ -79,3 +79,75 @@ client-provided user ID.
 Response `200` uses the same user object returned by the login endpoint.
 
 Response `401`: `AUTH_INVALID`.
+
+## POST /api/v1/diaries
+
+Creates a private diary entry for the authenticated user. AI processing is not
+started until Phase 5; `reflectionStatus` is returned as `pending` as the stable
+contract for that later pipeline.
+
+Request:
+
+```json
+{
+  "content": "今天完成了数据库作业。",
+  "energyScore": 65,
+  "moodLabel": "愉悦",
+  "imageIds": []
+}
+```
+
+Constraints: `content` is 1–3000 characters, `energyScore` is 0–100, and
+`imageIds` must remain empty until the Phase 4 upload module exists.
+
+Response `201`:
+
+```json
+{
+  "code": 0,
+  "message": "ok",
+  "data": {
+    "diaryId": "uuid",
+    "reflectionStatus": "pending"
+  }
+}
+```
+
+## GET /api/v1/diaries?page=1&limit=20
+
+Returns only the authenticated user's non-deleted entries, ordered by
+`createdAt DESC`. `limit` is between 1 and 100.
+
+```json
+{
+  "code": 0,
+  "message": "ok",
+  "data": {
+    "list": [],
+    "page": 1,
+    "limit": 20,
+    "hasMore": false
+  }
+}
+```
+
+## GET /api/v1/diaries/{diaryId}
+
+Returns a diary only when both `diaryId` and the authenticated user's ID match.
+The Phase 2 response reserves empty `images`, `reflection`, and `markers` fields
+for later modules.
+
+## DELETE /api/v1/diaries/{diaryId}
+
+Soft-deletes an owned diary. Deleted entries are excluded from list and detail
+queries. The response is:
+
+```json
+{
+  "code": 0,
+  "message": "ok",
+  "data": { "deleted": true }
+}
+```
+
+Unknown, deleted, or foreign diary IDs return `404 DIARY_NOT_FOUND`.

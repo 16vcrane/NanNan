@@ -1,8 +1,48 @@
-<view class="page">
-  <view class="page-title">今日</view>
-  <view class="page-subtitle">记录此刻的心情与想法</view>
+<view class="page today-page">
+  <view class="custom-nav">
+    <text class="custom-nav-title">今日心情</text>
+  </view>
+  <text class="today-tagline">记录生活的每一份确幸</text>
 
-  <view class="surface editor-placeholder">
-    <text class="muted">日记编辑器将在后续模块接入</text>
+  <view class="surface record-sheet">
+    <view class="record-date">
+      <view class="calendar-mark">
+        <text>日</text>
+      </view>
+      <view class="date-copy">
+        <text class="date-text">{{dateText}}</text>
+        <text class="greeting-text">{{greeting}}</text>
+      </view>
+    </view>
+
+    <mood-slider value="{{energyScore}}" bind:change="handleMoodChange" />
+
+    <view class="editor-area">
+      <textarea
+        class="diary-input"
+        value="{{content}}"
+        maxlength="{{maxLength}}"
+        placeholder="试着写下今天最想记住的一刻，哪怕只有一句话。"
+        placeholder-class="diary-placeholder"
+        bindinput="handleContentInput"
+        auto-height="{{false}}"
+        show-confirm-bar="{{false}}"
+        cursor-spacing="24"
+        aria-label="日记正文"
+      />
+      <view class="editor-meta">
+        <text class="draft-status">{{draftStatus}}</text>
+        <text class="character-count">{{charCount}} / {{maxLength}}</text>
+      </view>
+    </view>
+
+    <button
+      class="save-button"
+      loading="{{saving}}"
+      disabled="{{!canSave || saving}}"
+      bindtap="handleSave"
+    >{{saving ? '保存中' : '保存日记'}}</button>
+
+    <text wx:if="{{saveState === 'failed'}}" class="save-error">网络暂时不可用，内容仍保存在本机</text>
   </view>
 </view>

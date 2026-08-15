@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "今日"
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "mood-slider": "/components/mood-slider/mood-slider"
+  }
 }

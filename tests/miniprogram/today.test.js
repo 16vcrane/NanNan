@@ -1,0 +1,152 @@
+const assert = require('node:assert/strict')
+const test = require('node:test')
+
+const storage = new Map()
+
+global.wx = {
+  getStorageSync(key) {
+    return storage.get(key)
+  },
+  setStorageSync(key, value) {
+    storage.set(key, value)
+  },
+  removeStorageSync(key) {
+    storage.delete(key)
+  },
+  enableAlertBeforeUnload() {},
+  disableAlertBeforeUnload() {},
+  showToast() {}
+}
+
+global.getApp = () => ({
+  globalData: {
+    userInfo: { id: 'user-1' }
+  },
+  loginPromise: Promise.resolve()
+})
+
+let pageDefinition
+global.Page = (definition) => {
+  pageDefinition = definition
+}
+
+const { getMoodForScore } = require('../../miniprogram/config/moods')
+const draftService = require('../../miniprogram/services/draft')
+const api = require('../../miniprogram/services/api')
+const auth = require('../../miniprogram/services/auth')
+require('../../miniprogram/pages/today/today')
+
+function createPage() {
+  return {
+    ...pageDefinition,
+    data: { ...pageDefinition.data },
+    setData(patch) {
+      Object.assign(this.data, patch)
+    }
+  }
+}
+
+test('mood mapping covers boundary values', () => {
+  assert.equal(getMoodForScore(0).label, '低落')
+  assert.equal(getMoodForScore(20).label, '低落')
+  assert.equal(getMoodForScore(21).label, '平静')
+  assert.equal(getMoodForScore(50).label, '明亮')
+  assert.equal(getMoodForScore(100).label, '高亢')
+})
+
+test('drafts are isolated by user id', () => {
+  draftService.saveDraft('user-a', { content: 'A', energyScore: 20 })
+  draftService.saveDraft('user-b', { content: 'B', energyScore: 80 })
+
+  assert.equal(draftService.getDraft('user-a').content, 'A')
+  assert.equal(draftService.getDraft('user-b').content, 'B')
+
+  draftService.clearDraft('user-a')
+  assert.equal(draftService.getDraft('user-a'), null)
+  assert.equal(draftService.getDraft('user-b').content, 'B')
+})
+
+test('content input updates count and save state without trimming content', () => {
+  const page = createPage()
+  page.draftUserId = null
+  page.draftTimer = null
+  page.isDirty = false
+
+  page.handleContentInput({ detail: { value: '  今天很好。\n' } })
+
+  assert.equal(page.data.content, '  今天很好。\n')
+  assert.equal(page.data.charCount, 8)
+  assert.equal(page.data.canSave, true)
+  assert.equal(page.isDirty, true)
+})
+
+test('blank content cannot be saved', () => {
+  const page = createPage()
+  page.draftUserId = null
+  page.draftTimer = null
+  page.isDirty = false
+
+  page.handleContentInput({ detail: { value: '   ' } })
+
+  assert.equal(page.data.canSave, false)
+})
+
+test('late draft initialization never overwrites current input', async () => {
+  draftService.saveDraft('user-1', {
+    content: '旧草稿',
+    energyScore: 20,
+    moodLabel: '低落'
+  })
+  const page = createPage()
+  page.draftTimer = null
+  page.draftUserId = null
+  page.isDirty = false
+
+  page.handleContentInput({ detail: { value: '刚刚输入的内容' } })
+  await page.initializeDraft()
+
+  assert.equal(page.data.content, '刚刚输入的内容')
+  assert.equal(draftService.getDraft('user-1').content, '刚刚输入的内容')
+})
+
+test('successful save sends the exact draft and resets the editor', async () => {
+  const originalCreateDiary = api.createDiary
+  const originalEnsureLogin = auth.ensureLogin
+  let submittedPayload
+  api.createDiary = async (payload) => {
+    submittedPayload = payload
+    return { data: { diaryId: 'diary-1' } }
+  }
+  auth.ensureLogin = async () => ({ id: 'user-1' })
+
+  const page = createPage()
+  page.draftTimer = null
+  page.draftUserId = 'user-1'
+  page.isDirty = true
+  page.setData({
+    content: '原样保存\n第二行',
+    charCount: 8,
+    energyScore: 73,
+    moodLabel: '愉悦',
+    canSave: true
+  })
+  draftService.saveDraft('user-1', submittedPayload || { content: '原样保存\n第二行' })
+
+  try {
+    await page.handleSave()
+  } finally {
+    api.createDiary = originalCreateDiary
+    auth.ensureLogin = originalEnsureLogin
+  }
+
+  assert.deepEqual(submittedPayload, {
+    content: '原样保存\n第二行',
+    energyScore: 73,
+    moodLabel: '愉悦',
+    imageIds: []
+  })
+  assert.equal(page.data.content, '')
+  assert.equal(page.data.saveState, 'success')
+  assert.equal(page.isDirty, false)
+  assert.equal(draftService.getDraft('user-1'), null)
+})

@@ -3,9 +3,12 @@
   --color-surface: #FFFDF9;
   --color-text: #3D2C1B;
   --color-text-muted: #8B7A6B;
+  --color-text-primary: #3D2C1B;
+  --color-text-secondary: #8B7A6B;
   --color-primary: #8A5A3B;
   --color-primary-soft: #E8D7C7;
   --color-border: #E7DDD2;
+  --color-danger: #A94F45;
   --color-mood-low: #B8B0A5;
   --color-mood-calm: #A8B9B0;
   --color-mood-bright: #D4B58A;

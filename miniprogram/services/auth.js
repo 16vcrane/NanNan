@@ -27,6 +27,7 @@ async function loginWithWechat() {
   const code = await getWechatCode()
   const response = await api.login(code)
   storage.setAccessToken(response.data.accessToken)
+  storage.setAuthUser(response.data.user)
   app.globalData.accessToken = response.data.accessToken
   app.globalData.userInfo = response.data.user
   app.globalData.authStatus = 'authenticated'
@@ -36,23 +37,31 @@ async function loginWithWechat() {
 async function restoreLogin() {
   const app = getApp()
   const token = storage.getAccessToken()
+  const cachedUser = storage.getAuthUser()
   if (!token) {
     return null
   }
 
   app.globalData.accessToken = token
+  app.globalData.userInfo = cachedUser
   app.globalData.authStatus = 'loading'
   try {
     const response = await api.getCurrentUser()
+    storage.setAuthUser(response.data)
     app.globalData.userInfo = response.data
     app.globalData.authStatus = 'authenticated'
     return response.data
   } catch (error) {
     if (error.statusCode === 401) {
       storage.clearAccessToken()
+      storage.clearAuthUser()
       app.globalData.accessToken = null
       app.globalData.userInfo = null
       return null
+    }
+    if (cachedUser) {
+      app.globalData.authStatus = 'offline'
+      return cachedUser
     }
     app.globalData.authStatus = 'failed'
     throw error
@@ -82,6 +91,7 @@ function ensureLogin(options = {}) {
 function clearLogin() {
   const app = getApp()
   storage.clearAccessToken()
+  storage.clearAuthUser()
   app.globalData.accessToken = null
   app.globalData.userInfo = null
   app.globalData.authStatus = 'idle'
