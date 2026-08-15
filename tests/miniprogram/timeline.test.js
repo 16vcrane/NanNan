@@ -109,3 +109,19 @@ test('timeline diary selection opens its detail page', () => {
 
   assert.equal(global.lastNavigationUrl, '/pages/detail/detail?diaryId=diary-3')
 })
+
+test('timeline filters diaries by content and photos', () => {
+  const page = createPage()
+  page.setData({
+    diaries: [
+      { id: 'text', content: 'a diary', images: [] },
+      { id: 'photo', content: '', images: [{ id: 'image-1' }] }
+    ]
+  })
+
+  page.handleFilter({ currentTarget: { dataset: { filter: 'photos' } } })
+  assert.deepEqual(page.data.visibleDiaries.map((diary) => diary.id), ['photo'])
+
+  page.handleFilter({ currentTarget: { dataset: { filter: 'diary' } } })
+  assert.deepEqual(page.data.visibleDiaries.map((diary) => diary.id), ['text'])
+})

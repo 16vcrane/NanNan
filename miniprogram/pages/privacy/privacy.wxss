@@ -1,1 +1,10 @@
-/* Shared document styles are defined in app.wxss. */
+.privacy-page {
+  padding-top: 64rpx;
+  padding-right: 48rpx;
+  padding-left: 48rpx;
+  background: #F2F7F8;
+}
+
+.privacy-page .document-updated { color: #70868B; }
+.privacy-page .document-section { border-color: #D8E5E7; }
+.privacy-page .document-title { color: #385D63; }

@@ -1,1 +1,10 @@
-/* Shared document styles are defined in app.wxss. */
+.agreement-page {
+  padding-top: 64rpx;
+  padding-right: 48rpx;
+  padding-left: 48rpx;
+  background: #F8F3F0;
+}
+
+.agreement-page .document-updated { color: #8A7065; }
+.agreement-page .document-section { border-color: #E8DCD6; }
+.agreement-page .document-title { color: #704C41; }

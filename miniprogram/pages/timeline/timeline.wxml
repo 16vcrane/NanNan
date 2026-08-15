@@ -1,6 +1,16 @@
-<view class="page">
-  <view class="page-title">时光</view>
-  <view class="page-subtitle">往日记录会在这里按时间呈现</view>
+<view class="page timeline-page">
+  <view class="timeline-heading">
+    <view class="page-title">时光</view>
+    <view class="page-subtitle">按时间回看生活里的每一个片段</view>
+  </view>
+  <scroll-view class="filter-scroll" scroll-x="true" show-scrollbar="false">
+    <view class="filter-list">
+      <view class="filter-pill {{activeFilter === 'all' ? 'active' : ''}}" data-filter="all" bindtap="handleFilter">全部</view>
+      <view class="filter-pill {{activeFilter === 'mood' ? 'active' : ''}}" data-filter="mood" bindtap="handleFilter">心情</view>
+      <view class="filter-pill {{activeFilter === 'diary' ? 'active' : ''}}" data-filter="diary" bindtap="handleFilter">日记</view>
+      <view class="filter-pill {{activeFilter === 'photos' ? 'active' : ''}}" data-filter="photos" bindtap="handleFilter">照片</view>
+    </view>
+  </scroll-view>
 
   <view wx:if="{{loading}}" class="timeline-state">
     <view class="loading-line"></view>
@@ -12,14 +22,14 @@
     <button class="retry-action" bindtap="loadDiaries">重新加载</button>
   </view>
 
-  <view wx:elif="{{!diaries.length}}" class="surface empty-state">
+  <view wx:elif="{{!visibleDiaries.length}}" class="surface empty-state">
     <text class="empty-title">还没有日记</text>
     <text class="muted">写下第一篇记录后，它会出现在这里</text>
     <button class="write-action" bindtap="goToToday">去记录此刻</button>
   </view>
 
   <view wx:else class="timeline-list">
-    <view wx:for="{{diaries}}" wx:key="id" class="timeline-entry">
+    <view wx:for="{{visibleDiaries}}" wx:key="id" class="timeline-entry">
       <view class="timeline-rail">
         <view class="timeline-dot"></view>
         <view class="timeline-line"></view>

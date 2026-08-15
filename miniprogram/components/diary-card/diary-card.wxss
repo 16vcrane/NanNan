@@ -1,10 +1,10 @@
 .diary-card {
   min-width: 0;
-  margin-bottom: 28rpx;
-  padding: 28rpx;
+  margin-bottom: 22rpx;
+  padding: 24rpx;
   box-sizing: border-box;
   border: 1rpx solid var(--color-border);
-  border-radius: 8rpx;
+  border-radius: 18rpx;
   background: var(--color-surface);
 }
 
@@ -18,8 +18,9 @@
 }
 
 .date-text {
-  color: var(--color-text-muted);
-  font-size: 23rpx;
+  color: var(--color-text);
+  font-size: 25rpx;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
@@ -40,7 +41,7 @@
 
 .card-body {
   min-width: 0;
-  margin-top: 18rpx;
+  margin-top: 14rpx;
 }
 
 .card-body.has-image {
@@ -53,9 +54,9 @@
 .diary-summary {
   min-width: 0;
   display: block;
-  color: var(--color-text);
-  font-size: 28rpx;
-  line-height: 1.75;
+  color: var(--color-text-secondary);
+  font-size: 26rpx;
+  line-height: 1.65;
   white-space: pre-wrap;
   word-break: break-all;
 }
@@ -65,7 +66,7 @@
   height: 112rpx;
   position: relative;
   overflow: hidden;
-  border-radius: 6rpx;
+  border-radius: 10rpx;
   background: #eee5dc;
 }
 
@@ -110,8 +111,8 @@
   padding: 0 14rpx;
   box-sizing: border-box;
   border: 1rpx solid;
-  border-radius: 6rpx;
-  background: #fffdf9;
+  border-radius: 999rpx;
+  background: #FBF7F0;
   font-size: 22rpx;
   line-height: 42rpx;
 }

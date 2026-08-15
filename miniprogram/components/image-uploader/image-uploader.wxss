@@ -24,9 +24,7 @@
   overflow: hidden;
 }
 
-.image-grid-empty {
-  justify-content: center;
-}
+.image-grid-empty { justify-content: flex-start; }
 
 .image-item,
 .add-button {
@@ -36,8 +34,12 @@
   flex: 0 0 132rpx;
   overflow: hidden;
   box-sizing: border-box;
-  border-radius: 7rpx;
+  border-radius: 14rpx;
 }
+
+.image-item { transition: transform 160ms ease, opacity 160ms ease, box-shadow 160ms ease; }
+.image-item-dragging { z-index: 4; opacity: 0.72; transform: scale(0.94); }
+.image-item-target { box-shadow: 0 0 0 4rpx rgba(107, 73, 51, 0.24); }
 
 .image-preview {
   width: 100%;
@@ -82,19 +84,24 @@
 .remove-button {
   position: absolute;
   z-index: 3;
-  top: 8rpx;
-  right: 8rpx;
-  width: 44rpx;
-  height: 44rpx;
+  top: 6rpx;
+  right: 6rpx;
+  width: 50rpx;
+  height: 50rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin: 0;
   padding: 0;
-  border: 0;
+  border: 3rpx solid #FFFFFF;
   border-radius: 50%;
-  background: rgba(61, 44, 27, 0.78);
-  color: #FFFFFF;
-  font-size: 30rpx;
-  line-height: 40rpx;
+  background: #493326;
+  box-shadow: 0 3rpx 10rpx rgba(45, 30, 20, 0.32);
+  color: #FFFFFF !important;
+  line-height: 1;
 }
+
+.remove-icon { color: #FFFFFF; font-size: 36rpx; font-weight: 500; line-height: 1; transform: translateY(-1rpx); }
 
 .add-button {
   display: flex;
@@ -103,7 +110,8 @@
   justify-content: center;
   margin: 0;
   padding: 0;
-  border: 2rpx dashed #AFA196;
+  border: 3rpx dashed #A99A8D;
+  border-radius: 14rpx;
   background-color: #FFFDFC;
   color: #7C7067;
 }

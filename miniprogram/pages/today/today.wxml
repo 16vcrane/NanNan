@@ -11,8 +11,11 @@
 
   <view class="surface record-sheet">
     <view class="record-date">
-      <view class="calendar-mark">
-        <text>日</text>
+      <view class="calendar-mark" role="img" aria-label="日期">
+        <view class="calendar-binding binding-left"></view>
+        <view class="calendar-binding binding-right"></view>
+        <view class="calendar-divider"></view>
+        <view class="calendar-date-dot"></view>
       </view>
       <view class="date-copy">
         <text class="date-text">{{dateText}}</text>
@@ -48,6 +51,7 @@
       bind:select="handleImageSelect"
       bind:remove="handleImageRemove"
       bind:retry="handleImageRetry"
+      bind:reorder="handleImageReorder"
     />
 
     <button

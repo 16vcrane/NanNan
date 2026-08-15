@@ -1,3 +1,23 @@
+.timeline-page {
+  padding-top: 64rpx;
+  padding-right: 48rpx;
+  padding-left: 48rpx;
+  background: #FCF9F4;
+}
+
+.timeline-heading { padding: 0 4rpx; }
+.timeline-heading .page-subtitle { margin-top: 12rpx; }
+
+.filter-scroll { margin-top: 34rpx; white-space: nowrap; }
+.filter-list { display: inline-flex; gap: 16rpx; padding: 2rpx 0 4rpx; }
+.filter-pill {
+  min-width: 104rpx; height: 58rpx; padding: 0 24rpx; box-sizing: border-box;
+  border: 1rpx solid var(--color-border); border-radius: 999rpx;
+  background: #FFFDFC; color: var(--color-text-muted);
+  font-size: 25rpx; line-height: 56rpx; text-align: center;
+}
+.filter-pill.active { border-color: #F1D8BA; background: #FBE8D2; color: var(--color-text); font-weight: 600; }
+
 .empty-state {
   min-height: 280rpx;
   display: flex;
@@ -65,13 +85,13 @@
 .retry-action::after { border: 0; }
 
 .timeline-list {
-  margin-top: 40rpx;
+  margin-top: 34rpx;
 }
 
 .timeline-entry {
   display: grid;
-  grid-template-columns: 34rpx minmax(0, 1fr);
-  gap: 18rpx;
+  grid-template-columns: 20rpx minmax(0, 1fr);
+  gap: 14rpx;
 }
 
 .timeline-rail {
@@ -87,14 +107,14 @@
   flex: 0 0 auto;
   margin-top: 34rpx;
   box-sizing: border-box;
-  border: 3rpx solid var(--color-page);
+  border: 3rpx solid #FCF9F4;
   border-radius: 50%;
   background: var(--color-primary);
   box-shadow: 0 0 0 2rpx var(--color-primary-soft);
 }
 
 .timeline-line {
-  width: 2rpx;
+  width: 1rpx;
   min-height: 40rpx;
   flex: 1;
   background: var(--color-border);

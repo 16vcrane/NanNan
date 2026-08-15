@@ -4,17 +4,16 @@
   </view>
 
   <view class="image-grid {{images.length === 0 ? 'image-grid-empty' : ''}}">
-    <button
-      wx:if="{{images.length < maxCount}}"
-      class="add-button"
-      disabled="{{disabled}}"
-      bindtap="chooseImages"
-      aria-label="添加照片"
+    <view
+      wx:for="{{images}}"
+      wx:key="localId"
+      class="image-item {{dragIndex === index ? 'image-item-dragging' : ''}} {{dragTargetIndex === index ? 'image-item-target' : ''}}"
+      data-index="{{index}}"
+      bindlongpress="startDrag"
+      catchtouchmove="moveDrag"
+      catchtouchend="endDrag"
+      catchtouchcancel="cancelDrag"
     >
-      <text class="add-icon">+</text>
-    </button>
-
-    <view wx:for="{{images}}" wx:key="localId" class="image-item">
       <image
         class="image-preview"
         src="{{item.localPath}}"
@@ -33,8 +32,17 @@
         data-id="{{item.localId}}"
         bindtap="removeImage"
         aria-label="移除图片"
-      >×</button>
+      ><text class="remove-icon">×</text></button>
     </view>
 
+    <button
+      wx:if="{{images.length < maxCount}}"
+      class="add-button"
+      disabled="{{disabled}}"
+      bindtap="chooseImages"
+      aria-label="添加照片"
+    >
+      <text class="add-icon">+</text>
+    </button>
   </view>
 </view>

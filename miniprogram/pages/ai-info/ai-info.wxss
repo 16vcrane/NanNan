@@ -1,6 +1,21 @@
+.ai-info-page {
+  padding-top: 64rpx;
+  padding-right: 48rpx;
+  padding-left: 48rpx;
+  background: #F2F7F3;
+}
+
 .info-section {
   margin-top: 28rpx;
+  border-color: #DCE9DF;
+  border-radius: 18rpx;
+  background: #FBFEFC;
+  box-shadow: 0 6rpx 20rpx rgba(58, 91, 67, 0.05);
 }
+
+.tone-blue { border-color: #DDE7EE; background: #F9FCFE; }
+.tone-warm { border-color: #E8DFD6; background: #FEFBF7; }
+.tone-violet { border-color: #E6DFEB; background: #FCFAFD; }
 
 .info-title {
   margin-bottom: 16rpx;

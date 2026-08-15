@@ -194,3 +194,20 @@ test('save submits only successful images and does not block on failed images', 
   assert.equal(page.data.saveState, 'success')
   assert.deepEqual(page.data.images, [])
 })
+
+test('drag reorder changes image submission order', () => {
+  const page = createPage()
+  page.draftUserId = null
+  page.draftTimer = null
+  page.setData({
+    images: [
+      { localId: 'first', imageId: 'image-1' },
+      { localId: 'second', imageId: 'image-2' },
+      { localId: 'third', imageId: 'image-3' }
+    ]
+  })
+
+  page.handleImageReorder({ detail: { fromIndex: 0, toIndex: 2 } })
+
+  assert.deepEqual(page.data.images.map((image) => image.localId), ['second', 'third', 'first'])
+})

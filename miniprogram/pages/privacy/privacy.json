@@ -1,3 +1,5 @@
 {
-  "navigationBarTitleText": "隐私政策"
+  "navigationBarTitleText": "隐私政策",
+  "navigationBarBackgroundColor": "#F2F7F8",
+  "backgroundColor": "#F2F7F8"
 }

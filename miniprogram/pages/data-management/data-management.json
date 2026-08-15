@@ -1,3 +1,5 @@
 {
-  "navigationBarTitleText": "数据管理"
+  "navigationBarTitleText": "数据管理",
+  "navigationBarBackgroundColor": "#F5F6F3",
+  "backgroundColor": "#F5F6F3"
 }

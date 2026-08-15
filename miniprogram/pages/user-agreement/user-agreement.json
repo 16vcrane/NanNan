@@ -1,3 +1,5 @@
 {
-  "navigationBarTitleText": "用户协议"
+  "navigationBarTitleText": "用户协议",
+  "navigationBarBackgroundColor": "#F8F3F0",
+  "backgroundColor": "#F8F3F0"
 }

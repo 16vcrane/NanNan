@@ -5,9 +5,8 @@ const { getMoodForScore } = require('../../config/moods')
 function formatDate(value) {
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return ''
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${date.getFullYear()}.${month}.${day}`
+  const weekdays = ['日', '一', '二', '三', '四', '五', '六']
+  return `${date.getMonth() + 1}月${date.getDate()}日 · 周${weekdays[date.getDay()]}`
 }
 
 function summarize(content) {
@@ -37,6 +36,8 @@ function mergeDiaries(current, incoming) {
 Page({
   data: {
     diaries: [],
+    visibleDiaries: [],
+    activeFilter: 'all',
     loading: true,
     refreshing: false,
     loadingMore: false,
@@ -82,6 +83,7 @@ Page({
         : mergeDiaries(this.data.diaries, presented)
       this.setData({
         diaries,
+        visibleDiaries: this.filterDiaries(diaries, this.data.activeFilter),
         page: response.data.page,
         hasMore: Boolean(response.data.hasMore),
         loading: false,
@@ -102,6 +104,18 @@ Page({
     } finally {
       if (wx.stopPullDownRefresh) wx.stopPullDownRefresh()
     }
+  },
+
+  filterDiaries(diaries, filter) {
+    if (filter === 'mood') return diaries.filter((diary) => diary.moodLabel || diary.moodText)
+    if (filter === 'diary') return diaries.filter((diary) => diary.content)
+    if (filter === 'photos') return diaries.filter((diary) => diary.images && diary.images.length)
+    return diaries
+  },
+
+  handleFilter(event) {
+    const filter = event.currentTarget.dataset.filter || 'all'
+    this.setData({ activeFilter: filter, visibleDiaries: this.filterDiaries(this.data.diaries, filter) })
   },
 
   async hydrateThumbnails(diaries) {
@@ -126,7 +140,10 @@ Page({
     const diaries = this.data.diaries.map((diary) => (
       diary.id === diaryId ? { ...diary, thumbnailPath } : diary
     ))
-    this.setData({ diaries })
+    this.setData({
+      diaries,
+      visibleDiaries: this.filterDiaries(diaries, this.data.activeFilter)
+    })
   },
 
   onPullDownRefresh() {

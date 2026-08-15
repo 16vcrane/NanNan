@@ -357,6 +357,25 @@ Page({
     this.uploadPreparedImage(image.localId, image.localPath)
   },
 
+  handleImageReorder(event) {
+    const fromIndex = Number(event.detail.fromIndex)
+    const toIndex = Number(event.detail.toIndex)
+    if (
+      fromIndex === toIndex ||
+      fromIndex < 0 ||
+      toIndex < 0 ||
+      fromIndex >= this.data.images.length ||
+      toIndex >= this.data.images.length
+    ) return
+
+    const images = [...this.data.images]
+    const [moved] = images.splice(fromIndex, 1)
+    images.splice(toIndex, 0, moved)
+    this.markDirty()
+    this.setData({ images })
+    this.scheduleDraft()
+  },
+
   handleImageRemove(event) {
     const image = this.data.images.find((item) => item.localId === event.detail.localId)
     if (!image) return
