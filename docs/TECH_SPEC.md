@@ -2250,6 +2250,9 @@ T071 最终回归
 
 # 31. AI 应用工程增强路线
 
+详细工程计划、质量门禁与任务拆分见
+[`AI_ENHANCEMENT_ROADMAP.md`](./AI_ENHANCEMENT_ROADMAP.md)。
+
 MVP 完成后，再按以下顺序增强：
 
 ## V1.1
