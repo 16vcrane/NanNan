@@ -11,6 +11,7 @@ from app.models.reflection import AiReflection
 from app.models.marker import TimelineMarker
 from app.ai.reflection import PROMPT_VERSION
 from app.services.marker_service import build_marker_models
+from app.services.memory_extraction_service import create_memory_extraction
 
 
 class DiaryNotFoundError(Exception):
@@ -58,6 +59,7 @@ async def create_diary(
     db.add(reflection)
     await db.flush()
     diary.ai_reflection_id = reflection.id
+    await create_memory_extraction(db, diary)
 
     if image_ids:
         result = await db.execute(
@@ -146,6 +148,9 @@ async def delete_diary(
         )
     )
     reflection = reflection_result.scalar_one_or_none()
+    from app.models.memory import MemoryExtraction, RetrievalRun
+    await db.execute(delete(RetrievalRun).where(RetrievalRun.diary_entry_id == diary.id))
+    await db.execute(delete(MemoryExtraction).where(MemoryExtraction.diary_entry_id == diary.id))
     try:
         for image in images:
             if image.status == "success":

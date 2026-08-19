@@ -10,6 +10,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from app.api.auth import router as auth_router
 from app.api.diaries import router as diaries_router
+from app.api.memories import router as memories_router
 from app.api.health import router as health_router
 from app.api.reflections import router as reflections_router
 from app.api.uploads import router as uploads_router
@@ -39,6 +40,7 @@ if settings.force_https:
 app.include_router(health_router, prefix="/api/v1")
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(diaries_router, prefix="/api/v1")
+app.include_router(memories_router, prefix="/api/v1")
 app.include_router(reflections_router, prefix="/api/v1")
 app.include_router(uploads_router, prefix="/api/v1")
 app.include_router(users_router, prefix="/api/v1")

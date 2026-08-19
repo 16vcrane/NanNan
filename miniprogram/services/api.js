@@ -39,6 +39,11 @@ function getDiaryDetail(diaryId) {
   return request({ url: `/diaries/${diaryId}` })
 }
 
+function getOnThisDay(timezone) {
+  const tz = timezone ? `?timezone=${encodeURIComponent(timezone)}` : ''
+  return request({ url: `/memories/on-this-day${tz}` })
+}
+
 function deleteDiary(diaryId) {
   return request({
     url: `/diaries/${diaryId}`,
@@ -71,6 +76,7 @@ module.exports = {
   createDiary,
   getDiaryList,
   getDiaryDetail,
+  getOnThisDay,
   deleteDiary,
   getReflection,
   retryReflection,

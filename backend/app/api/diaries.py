@@ -2,6 +2,7 @@ import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Header, HTTPException, Query, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.core.database import get_db
@@ -46,6 +47,8 @@ from app.services.reflection_service import (
     get_reflection,
     run_reflection_task,
 )
+from app.models.memory import MemoryExtraction
+from app.services.memory_extraction_service import run_memory_extraction_task
 from app.services.marker_service import list_markers_for_diaries
 
 router = APIRouter(prefix="/diaries", tags=["diaries"])
@@ -107,6 +110,12 @@ async def create_diary_endpoint(
     background_tasks.add_task(
         run_reflection_task, diary.ai_reflection_id, task_sessions
     )
+    extraction_result = await db.execute(
+        select(MemoryExtraction.id).where(MemoryExtraction.diary_entry_id == diary.id)
+    )
+    extraction_id = extraction_result.scalar_one_or_none()
+    if extraction_id is not None:
+        background_tasks.add_task(run_memory_extraction_task, extraction_id, task_sessions)
     response = CreateDiaryResponse(
         data=CreateDiaryData(diaryId=diary.id, reflectionStatus="pending")
     )

@@ -196,6 +196,63 @@ Returns a diary only when both `diaryId` and the authenticated user's ID match.
 contains its current AI state; `markers` uses the same marker object returned
 by the list endpoint.
 
+## GET /api/v1/memories/on-this-day
+
+Returns up to three records owned by the authenticated user for a local
+calendar-day recall. The query accepts an IANA timezone name:
+
+```http
+GET /api/v1/memories/on-this-day?timezone=Asia/Shanghai
+```
+
+Candidates are ordered by: same month/day in prior years, then 30, 100, and
+365 days ago. Deleted and foreign diaries are excluded. The response contains
+only a normalized short text summary, date, and mood metadata; it does not
+expose images in this entry point. When no recall exists, `items` is an empty
+array.
+
+```json
+{
+  "code": 0,
+  "message": "ok",
+  "data": {
+    "today": "2026-08-19",
+    "timezone": "Asia/Shanghai",
+    "items": [
+      {
+        "diaryId": "uuid",
+        "date": "2025-08-19",
+        "createdAt": "2025-08-19T08:00:00Z",
+        "energyScore": 65,
+        "moodLabel": "愉悦",
+        "summary": "今天完成了数据库作业。",
+        "source": "same_date",
+        "distanceDays": 365
+      }
+    ]
+  }
+}
+```
+
+An invalid timezone returns `400 TIMEZONE_INVALID`.
+
+## PATCH /api/v1/users/me/ai-preferences
+
+Controls whether the user's future AI reflections may use structured personal
+memory. It defaults to `false`; disabling it immediately returns future
+reflections to the current-diary-only prompt. Existing diary text is never
+changed.
+
+```http
+PATCH /api/v1/users/me/ai-preferences
+Content-Type: application/json
+
+{"personalMemoryEnabled": true}
+```
+
+The response contains the saved `personalMemoryEnabled` value. Retrieval audit
+records contain only IDs and counts, never diary or evidence text.
+
 ## DELETE /api/v1/diaries/{diaryId}
 
 Soft-deletes an owned diary. Deleted entries are excluded from list and detail

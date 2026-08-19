@@ -4,6 +4,9 @@ const test = require('node:test')
 const storage = new Map()
 
 global.wx = {
+  navigateTo(options) {
+    global.lastNavigationUrl = options.url
+  },
   getStorageSync(key) {
     return storage.get(key)
   },
@@ -242,4 +245,45 @@ test('weak network keeps the draft and reuses the idempotency key', async () => 
   assert.equal(keys[0], keys[1])
   assert.equal(page.data.saveState, 'success')
   assert.equal(draftService.getDraft('user-1'), null)
+})
+
+test('historical memories are loaded and formatted without changing the editor', async () => {
+  const originalGetOnThisDay = api.getOnThisDay
+  api.getOnThisDay = async () => ({
+    data: {
+      items: [{
+        diaryId: 'diary-memory-1',
+        date: '2023-08-19',
+        energyScore: 72,
+        moodLabel: '愉悦',
+        summary: '那天完成了一件重要的事。',
+        source: 'same_date'
+      }]
+    }
+  })
+  const page = createPage()
+  page.memoryRequestId = 0
+  page.setData({ content: '正在写的内容', charCount: 6 })
+
+  try {
+    await page.loadOnThisDay()
+  } finally {
+    api.getOnThisDay = originalGetOnThisDay
+  }
+
+  assert.equal(page.data.content, '正在写的内容')
+  assert.equal(page.data.memoryItems[0].dateText, '2023年8月19日')
+  assert.equal(page.data.memoryItems[0].sourceText, '同月同日')
+})
+
+test('historical memory opens the original diary detail', () => {
+  global.lastNavigationUrl = ''
+  const page = createPage()
+
+  page.handleMemorySelect({ currentTarget: { dataset: { diaryId: 'diary-memory-2' } } })
+
+  assert.equal(
+    global.lastNavigationUrl,
+    '/pages/detail/detail?diaryId=diary-memory-2'
+  )
 })

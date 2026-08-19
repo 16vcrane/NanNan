@@ -15,12 +15,14 @@ from app.ai.guardrails import (
     validate_output,
 )
 from app.ai.provider import LLMProviderError, get_llm_provider
-from app.ai.reflection import generate_reflection
+from app.ai.reflection import generate_memory_reflection, generate_reflection
+from app.services.memory_retrieval_service import retrieve_context
 from app.core.config import get_settings
 from app.core.database import SessionLocal
 from app.core.redis import redis
 from app.models.diary import DiaryEntry
 from app.models.reflection import AiReflection
+from app.models.user import UserProfile
 
 logger = logging.getLogger(__name__)
 _local_locks: defaultdict[uuid.UUID, asyncio.Lock] = defaultdict(asyncio.Lock)
@@ -131,8 +133,9 @@ async def _run_reflection(
     started = time.perf_counter()
     async with session_factory() as db:
         result = await db.execute(
-            select(AiReflection, DiaryEntry)
+            select(AiReflection, DiaryEntry, UserProfile.personal_memory_enabled)
             .join(DiaryEntry, DiaryEntry.id == AiReflection.diary_entry_id)
+            .join(UserProfile, UserProfile.id == AiReflection.user_id)
             .where(
                 AiReflection.id == reflection_id,
                 AiReflection.status == "pending",
@@ -142,7 +145,7 @@ async def _run_reflection(
         row = result.one_or_none()
         if row is None:
             return
-        reflection, diary = row
+        reflection, diary, user_memory_enabled = row
         if reflection.attempt_count >= get_settings().reflection_max_attempts:
             reflection.status = "failed"
             reflection.content = FAILURE_FALLBACK
@@ -170,9 +173,20 @@ async def _run_reflection(
     model_name = None
     token_usage = None
     try:
-        output, provider_result = await generate_reflection(
-            diary_content, get_llm_provider()
-        )
+        memory_context = ""
+        use_memory = get_settings().personal_memory_enabled and bool(user_memory_enabled)
+        if use_memory or get_settings().personal_memory_shadow:
+            async with session_factory() as retrieval_db:
+                memory_context, _ = await retrieve_context(
+                    retrieval_db, reflection.user_id, reflection.diary_entry_id, diary_content,
+                    occurred_on=diary.created_at.date(),
+                )
+        if use_memory:
+            output, provider_result = await generate_memory_reflection(
+                diary_content, memory_context, get_llm_provider()
+            )
+        else:
+            output, provider_result = await generate_reflection(diary_content, get_llm_provider())
         validate_output(output.reflection, diary_content)
     except OutputGuardrailError:
         status = "blocked"

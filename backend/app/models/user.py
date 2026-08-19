@@ -24,6 +24,9 @@ class UserProfile(Base):
     ai_reflection_enabled: Mapped[bool] = mapped_column(
         Boolean, server_default=text("true"), nullable=False
     )
+    personal_memory_enabled: Mapped[bool] = mapped_column(
+        Boolean, server_default=text("false"), nullable=False
+    )
     anniversary_reminder_enabled: Mapped[bool] = mapped_column(
         Boolean, server_default=text("false"), nullable=False
     )

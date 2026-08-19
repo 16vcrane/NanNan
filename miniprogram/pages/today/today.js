@@ -12,6 +12,16 @@ function createIdempotencyKey() {
   return `${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`
 }
 
+function getLocalTimezone() {
+  try {
+    if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
+      const resolved = Intl.DateTimeFormat().resolvedOptions().timeZone
+      if (resolved) return resolved
+    }
+  } catch (error) {}
+  return 'UTC'
+}
+
 function getNavigationMetrics() {
   const fallback = {
     statusBarHeight: 20,
@@ -42,6 +52,21 @@ function getNavigationMetrics() {
 function formatToday(date) {
   const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
   return `${date.getMonth() + 1}月${date.getDate()}日 · ${weekdays[date.getDay()]}`
+}
+
+function formatMemoryDate(value) {
+  if (!value || typeof value !== 'string') return ''
+  const parts = value.split('-')
+  if (parts.length !== 3) return value
+  return `${parts[0]}年${Number(parts[1])}月${Number(parts[2])}日`
+}
+
+function formatMemorySource(source) {
+  if (source === 'same_date') return '同月同日'
+  if (source === '30d') return '30 天前'
+  if (source === '100d') return '100 天前'
+  if (source === '365d') return '365 天前'
+  return ''
 }
 
 function greetingForHour(hour) {
@@ -118,7 +143,10 @@ Page({
     saving: false,
     canSave: false,
     saveState: 'idle',
-    draftStatus: ''
+    draftStatus: '',
+    memoryLoading: false,
+    memoryError: false,
+    memoryItems: []
   },
 
   onLoad() {
@@ -128,12 +156,15 @@ Page({
     this.draftUserId = null
     this.saveIdempotencyKey = null
     this.isDirty = false
+    this.memoryRequestId = 0
+    this.memoryTimezone = getLocalTimezone()
     this.setData({
       ...navigation,
       dateText: formatToday(now),
       greeting: greetingForHour(now.getHours())
     })
     this.initializeDraft()
+    this.loadOnThisDay()
   },
 
   onHide() {
@@ -143,6 +174,7 @@ Page({
   onShow() {
     const tabBar = this.getTabBar && this.getTabBar()
     if (tabBar) tabBar.setData({ selected: 0 })
+    this.loadOnThisDay()
   },
 
   onUnload() {
@@ -195,6 +227,34 @@ Page({
     this.updateUnloadAlert()
   },
 
+  async loadOnThisDay() {
+    const requestId = (this.memoryRequestId || 0) + 1
+    this.memoryRequestId = requestId
+    this.setData({ memoryLoading: true, memoryError: false })
+    try {
+      const response = await api.getOnThisDay(this.memoryTimezone)
+      if (requestId !== this.memoryRequestId) return
+      const items = (response.data.items || []).map((item) => ({
+        ...item,
+        dateText: formatMemoryDate(item.date),
+        sourceText: formatMemorySource(item.source),
+        moodText: item.moodLabel || getMoodForScore(item.energyScore).label
+      }))
+      this.setData({
+        memoryItems: items,
+        memoryLoading: false,
+        memoryError: false
+      })
+    } catch (error) {
+      if (requestId !== this.memoryRequestId) return
+      this.setData({
+        memoryLoading: false,
+        memoryError: true,
+        memoryItems: []
+      })
+    }
+  },
+
   handleContentInput(event) {
     const content = event.detail.value
     this.markDirty()
@@ -215,6 +275,14 @@ Page({
       saveState: 'idle'
     })
     this.scheduleDraft()
+  },
+
+  handleMemorySelect(event) {
+    const diaryId = event.currentTarget.dataset.diaryId
+    if (!diaryId || !wx.navigateTo) return
+    wx.navigateTo({
+      url: `/pages/detail/detail?diaryId=${diaryId}`
+    })
   },
 
   markDirty() {

@@ -169,6 +169,15 @@ Caddy 自动申请 TLS 证书，公网仅暴露 80/443。部署完成后检查 `
 - 完成项目 README，补充项目定位、架构、启动、测试、API、部署和隐私说明。
 - 将 AI 应用工程路线整理为 README TODO，覆盖 AI-E1 至 AI-E7、质量门禁、任务编排和治理要求。
 
+### 2026-08-19 · Unreleased
+
+- 完成 AI-E1「历史上的今天」接口闭环：支持用户时区、跨年日期、30/100/365 天召回、用户隔离、软删除过滤和空结果处理。
+- 将 AI-E2 从原型契约推进为异步派生数据闭环：新增 `MemoryExtraction`、`MemoryItem` 模型和数据库迁移，接入 `memory_extract_v1`、源内容 hash、证据片段校验、失败/阻断状态以及日记删除级联清理。
+- 实现 AI-E3 Shadow 版本的 Personal Memory 检索：使用用户级 SQL、中文关键词、类型和时间相关性进行确定性评分，构建最多 3 条、600 字符的历史上下文，并记录不含正文的 `RetrievalRun` 审计信息。
+- 新增 `reflection_v2` Prompt、全局和用户级 Personal Memory 开关，以及 `PATCH /api/v1/users/me/ai-preferences` 接口；关闭开关后回退到仅使用当前日记的 AI 回响。
+- 新增 AI-E3 检索契约测试、中文关键词匹配测试和相关 API 文档；Python、前端 JavaScript 语法及 diff 格式检查通过。
+- 当前未进入 AI-E4 向量 RAG：需先完成 AI-E3 相关性、延迟、安全和用户价值评估；当前环境因缺少 `asyncpg` 与 `pytest`，未执行数据库集成测试。
+
 ### 1.0.0 · MVP 基线
 
 - 完成微信小程序的今日记录、时间轴、详情、AI 回响、个人中心和数据管理闭环。

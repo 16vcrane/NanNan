@@ -12,6 +12,7 @@ class UserSettingsResponse(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     ai_reflection_enabled: bool = Field(alias="aiReflectionEnabled")
+    personal_memory_enabled: bool = Field(alias="personalMemoryEnabled")
     anniversary_reminder_enabled: bool = Field(alias="anniversaryReminderEnabled")
     third_person_unlocked: bool = Field(alias="thirdPersonUnlocked")
 
@@ -32,6 +33,7 @@ class UserResponse(BaseModel):
             lastActiveAt=user.last_active_at,
             settings=UserSettingsResponse(
                 aiReflectionEnabled=user.ai_reflection_enabled,
+                personalMemoryEnabled=bool(user.personal_memory_enabled),
                 anniversaryReminderEnabled=user.anniversary_reminder_enabled,
                 thirdPersonUnlocked=user.third_person_unlocked,
             ),

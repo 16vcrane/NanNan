@@ -9,6 +9,30 @@
   </view>
   <text class="today-tagline">记录生活的每一份确幸</text>
 
+  <view wx:if="{{memoryItems.length}}" class="memory-section">
+    <view class="memory-heading">
+      <text class="memory-title">历史上的今天</text>
+      <text class="memory-subtitle">也许你会想起这一刻</text>
+    </view>
+    <view
+      wx:for="{{memoryItems}}"
+      wx:key="diaryId"
+      class="memory-item"
+      data-diary-id="{{item.diaryId}}"
+      bindtap="handleMemorySelect"
+    >
+      <view class="memory-meta">
+        <text class="memory-date">{{item.dateText}}</text>
+        <text class="memory-source">{{item.sourceText}}</text>
+      </view>
+      <view class="memory-summary">{{item.summary}}</view>
+      <view class="memory-mood">
+        <view class="memory-mood-dot"></view>
+        <text>{{item.moodText}}</text>
+      </view>
+    </view>
+  </view>
+
   <view class="surface record-sheet">
     <view class="record-date">
       <view class="calendar-mark" role="img" aria-label="日期">

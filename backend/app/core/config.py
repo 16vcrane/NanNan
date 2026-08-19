@@ -26,6 +26,13 @@ class Settings(BaseSettings):
     llm_base_url: str = ""
     llm_timeout_seconds: float = 30.0
     reflection_max_attempts: int = 3
+    personal_memory_enabled: bool = False
+    personal_memory_shadow: bool = True
+    retrieval_keyword_weight: float = 0.35
+    retrieval_type_weight: float = 0.25
+    retrieval_time_weight: float = 0.20
+    retrieval_confidence_weight: float = 0.15
+    retrieval_confirmed_weight: float = 0.05
     storage_endpoint: str = ""
     storage_bucket: str = ""
     storage_access_key: str = ""
